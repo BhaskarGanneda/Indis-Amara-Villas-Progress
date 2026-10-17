@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<!-- saved from url=(0081)file:///C:/Users/MyPC/OneDrive/Desktop/Bhaskar/construction-progress-tracker.html -->
+<html lang="en" data-theme="light"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Construction Progress Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./Construction Progress Tracker_files/css2" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --paper:#EEF0EE; --card:#FFFFFF; --line:#D3D8D6; --ink:#14283A; --muted:#5B6870;
+  --done:#1F7A55; --wip:#E0A100; --none:#CBD1D3; --hold:#7A4FB5; --soft:#F6F7F6; --bad:#C0392B;
+  --cA:#2F6DB5; --cB:#C2571A; --cC:#1F8A8A; --cD:#A33A6B; --cE:#7A5C1E; --cF:#4F7A2E; --cG:#6A4FA0; --cH:#B0483E; --cU:#6B7780;
+  --head:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1822; --card:#16232E; --line:#293945; --ink:#E7EDF0; --muted:#98A6AE;
+    --done:#3DBB86; --wip:#F0B429; --none:#3A4954; --hold:#A98BE0; --soft:#1B2A36; --bad:#E5675A;
+    --cA:#5B9BE0; --cB:#E8864A; --cC:#4DBDBD; --cD:#D9729C; --cE:#C9A04E; --cF:#8FC06A; --cG:#A98BE0; --cH:#E5857B; --cU:#98A6AE;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1822; --card:#16232E; --line:#293945; --ink:#E7EDF0; --muted:#98A6AE;
+  --done:#3DBB86; --wip:#F0B429; --none:#3A4954; --hold:#A98BE0; --soft:#1B2A36; --bad:#E5675A;
+  --cA:#5B9BE0; --cB:#E8864A; --cC:#4DBDBD; --cD:#D9729C; --cE:#C9A04E; --cF:#8FC06A; --cG:#A98BE0; --cH:#E5857B; --cU:#98A6AE;
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--wip);outline-offset:2px}
+h1,h2,h3{font-family:var(--head);font-weight:600;margin:0;letter-spacing:.2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 14px 60px}
+header.top{padding:16px 14px 10px;max-width:1180px;margin:0 auto;display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+header.top h1{font-size:30px;line-height:1.05}
+header.top .sub{color:var(--muted);font-size:13.5px;margin-top:4px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:7px 12px;font-size:13.5px;font-weight:500}
+.btn:hover{border-color:var(--ink)}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn.danger.armed{background:var(--bad);color:#fff}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:1px solid var(--line)}
+nav.tabs .in{max-width:1180px;margin:0 auto;display:flex;gap:2px;overflow-x:auto;padding:0 10px}
+nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:11px 14px;font-weight:600;color:var(--muted);white-space:nowrap}
+nav.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.grid{display:grid;gap:12px}
+.g4{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.sec{margin:22px 0 10px;font-size:22px}
+.sec small{font:400 13px var(--body);color:var(--muted);margin-left:6px}
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,2fr);gap:14px;margin-top:14px}
+@media(max-width:760px){.hero{grid-template-columns:1fr}}
+.big{font-family:var(--head);font-weight:700;font-size:84px;line-height:.9}
+.big span{font-size:34px;font-weight:600}
+.bar{height:10px;border-radius:5px;background:var(--none);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.d{background:var(--done)}.w{background:var(--wip)}
+.bar.pl{background:transparent;border:1px solid var(--line);height:8px;margin-top:3px}
+.bar.pl i{background:var(--ink);opacity:.6}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.kpi b{display:block;font-family:var(--head);font-size:34px;line-height:1}
+.kpi span{font-size:12.5px;color:var(--muted)}
+.sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:6px 0}
+.stat{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 10px;color:#fff;background:var(--muted)}
+.stat.ok{background:var(--done)}.stat.warn{background:#B27D00}.stat.bad{background:var(--bad)}
+.cc{cursor:pointer;border-top:5px solid var(--c);text-align:left;width:100%}
+.cc h3{font-size:22px}.cc .pct{font-family:var(--head);font-size:40px;font-weight:700;line-height:1}
+.lv{display:grid;grid-template-columns:minmax(120px,210px) 1fr 130px;gap:6px 10px;align-items:center}
+.lv .lab{font-size:13px}
+.lv .grp{grid-column:1/-1;font-family:var(--head);font-weight:600;font-size:15px;margin-top:8px;padding-top:6px;border-top:1px solid var(--line);color:var(--muted)}
+.lv .grp:first-child{border-top:0;margin-top:0;padding-top:0}
+.lv .num{font-size:12px;color:var(--muted);text-align:right}
+.lv .bar{height:14px;border-radius:3px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 14px;font-weight:600;font-size:13.5px}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.vc{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--c);border-radius:8px;padding:10px 12px;text-align:left;width:100%}
+.vc:hover{border-color:var(--ink);border-left-color:var(--c)}
+.vc .t{display:flex;justify-content:space-between;align-items:baseline}
+.vc .t b{font-family:var(--head);font-size:22px}
+.vc .t span{font-family:var(--head);font-size:20px;font-weight:600}
+.strip{display:flex;gap:2px;margin:6px 0}
+.strip i{flex:1;height:9px;border-radius:2px;background:var(--none)}
+.strip i.s1{background:var(--wip)}.strip i.s2{background:var(--done)}
+.vc.hold{background:repeating-linear-gradient(135deg,var(--card),var(--card) 9px,var(--soft) 9px,var(--soft) 18px)}
+.badge{display:inline-block;font-size:11.5px;font-weight:600;border-radius:4px;padding:1px 7px;background:var(--hold);color:#fff}
+.now{font-size:12.5px;color:var(--muted);min-height:34px}
+.mx-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px;background:var(--card);max-height:75vh}
+table.mx{border-collapse:separate;border-spacing:0;font-size:12px}
+.mx th,.mx td{padding:0;border-bottom:1px solid var(--line)}
+.mx thead th{position:sticky;top:0;background:var(--card);z-index:2;height:150px;vertical-align:bottom;border-bottom:2px solid var(--ink)}
+.mx thead th span{display:block;writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;padding:6px 3px;font-weight:500;margin:0 auto}
+.mx th.vn,.mx td.vn{position:sticky;left:0;background:var(--card);z-index:3;text-align:left;padding:4px 10px;min-width:92px;border-right:2px solid var(--ink);white-space:nowrap}
+.mx thead th.vn{z-index:4;vertical-align:bottom}
+.mx td.c{width:30px;min-width:30px;height:30px;padding:2px}
+.cell{display:block;width:100%;height:100%;min-height:24px;border:0;border-radius:3px;background:var(--none)}
+.cell.s1{background:var(--wip)}.cell.s2{background:var(--done)}
+.mx tr.hold td.vn{background:var(--soft)}
+.mx td.pc{padding:4px 8px;font-weight:600;text-align:right}
+.field{margin:10px 0}
+.field label,.lbl{display:block;font-weight:600;margin-bottom:5px}
+select,textarea,input[type=text],input[type=number],input[type=date]{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{flex:1;border:0;background:var(--card);padding:9px 6px;font-size:13.5px;font-weight:500;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"].b0{background:var(--none);color:#14283A}
+.seg button[aria-pressed="true"].b1{background:var(--wip);color:#14283A}
+.seg button[aria-pressed="true"].b2{background:var(--done);color:#fff}
+.vpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
+.vpick label{display:flex;align-items:center;gap:5px;border:1px solid var(--line);border-left:4px solid var(--c);border-radius:6px;padding:6px 7px;font-size:13px;cursor:pointer;background:var(--card);margin:0;font-weight:500}
+.vpick label:has(input:checked){background:var(--ink);color:var(--paper)}
+.vpick input{margin:0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.scrim{position:fixed;inset:0;background:rgba(10,20,30,.55);z-index:50;display:flex;justify-content:flex-end}
+.scrim.center{justify-content:center;align-items:flex-start;overflow:auto;padding:calc(10px + env(safe-area-inset-top,0px)) 10px 10px}
+.modal{background:var(--paper);border-radius:12px;width:min(720px,100%);padding:16px;margin:auto 0;border:1px solid var(--line)}
+.modal .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.steps{display:flex;gap:6px;margin:6px 0 14px;flex-wrap:wrap}
+.steps span{font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.steps span.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.opt{text-align:left;border:2px solid var(--line);background:var(--card);border-radius:10px;padding:12px}
+.opt[aria-pressed="true"]{border-color:var(--ink);background:var(--soft)}
+.opt b{display:block;font-family:var(--head);font-size:20px}
+.fr{display:grid;grid-template-columns:1fr 110px 38px;gap:6px;margin:6px 0;align-items:center}
+.fr.two{grid-template-columns:1fr 110px}
+.err{color:var(--bad);font-weight:600;margin:8px 0}
+.drawer{background:var(--paper);width:min(520px,100%);height:100%;overflow:auto;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(30px + env(safe-area-inset-bottom,0px));border-left:1px solid var(--line)}
+.drawer .stg{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.drawer .stg .seg{min-width:200px}
+.drawer .stg .seg button{padding:6px 4px;font-size:12px}
+.drawer .gh{font-family:var(--head);font-weight:600;font-size:17px;margin-top:14px;color:var(--muted)}
+@media(max-width:480px){.drawer .stg{grid-template-columns:1fr}.drawer .stg .seg{min-width:0}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--paper);padding:9px 16px;border-radius:8px;z-index:90;font-size:14px;max-width:90%}
+.ro{background:var(--hold);color:#fff;text-align:center;padding:6px;font-size:13px}
+.empty{padding:34px 16px;text-align:center}
+.pcard{border-top:5px solid var(--ink);text-align:left;width:100%}
+.pcard h3{font-size:24px;line-height:1.1}
+.pcard .pct{font-family:var(--head);font-size:42px;font-weight:700;line-height:1}
+.crv{width:100%;height:auto;display:block}
+.crv text{fill:var(--muted);font-size:11px;font-family:var(--body)}
+.crv .gl{stroke:var(--line);stroke-width:1}
+.crv .pl{fill:none;stroke:var(--ink);stroke-width:2;stroke-dasharray:6 4}
+.crv .ac{fill:none;stroke:var(--done);stroke-width:3}
+.crv .ap{fill:var(--done)}
+.crv .td{stroke:var(--bad);stroke-width:1.5;stroke-dasharray:3 3}
+.crv .tdt{fill:var(--bad)}
+.fch{display:flex;align-items:flex-end;gap:3px;height:150px;border-bottom:2px solid var(--ink);padding-top:6px}
+.fch .col{flex:1;min-width:6px;display:flex;flex-direction:column;justify-content:flex-end;height:100%;position:relative}
+.fch .col i{display:block;background:var(--done);border-radius:2px 2px 0 0;min-height:1px}
+.fch .col u{position:absolute;left:0;right:0;border-top:2px solid var(--ink);opacity:.55}
+.fl{display:flex;gap:3px;margin-top:3px}.fl span{flex:1;min-width:6px;font-size:10px;text-align:center;color:var(--muted);overflow:visible;white-space:nowrap}
+.std{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--line)}
+.std input{margin-top:4px;width:18px;height:18px}
+.std b{font-weight:600}.std .ref{color:var(--muted);font-size:13px}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th,.tbl td{padding:6px 6px;border-bottom:1px solid var(--line);text-align:left}
+.tbl input[type=date]{padding:6px 8px;min-width:140px}
+.tbl input[type=number]{padding:6px 8px;width:90px}
+.note{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px}
+@media(prefers-reduced-motion:no-preference){.bar i,.strip i{transition:width .3s,background .2s}}
+</style>
+</head>
+<body>
+<div id="ro" class="ro" hidden="">View only: you can see progress but not change it.</div>
+<div id="root"><header class="top"><div><button class="btn" data-act="home" style="margin-bottom:8px">All projects</button><h1>Indis Amara Villas</h1><div class="sub">Client: Indis &nbsp;|&nbsp; Payments: ICH Ventures Pvt Ltd &nbsp;|&nbsp; Villa project &nbsp;|&nbsp; Hyderabad, Telangana</div></div><div class="tools"><span class="stat warn">Slightly behind</span><button class="btn primary" data-act="xlsx">Export Excel</button><button class="btn" data-act="csv">Export CSV</button><button class="btn" data-act="theme">Light / Dark</button></div></header><nav class="tabs"><div class="in" role="tablist"><button role="tab" aria-selected="false" data-act="tab" data-v="overview">Overview</button><button role="tab" aria-selected="true" data-act="tab" data-v="groups">Villas</button><button role="tab" aria-selected="false" data-act="tab" data-v="matrix">Matrix</button><button role="tab" aria-selected="false" data-act="tab" data-v="update">Update progress</button><button role="tab" aria-selected="false" data-act="tab" data-v="schedule">Schedule</button><button role="tab" aria-selected="false" data-act="tab" data-v="standards">Standards</button><button role="tab" aria-selected="false" data-act="tab" data-v="settings">Settings</button></div></nav><main class="wrap"><div class="chips"><button class="chip" aria-pressed="true" data-act="gr" data-v="all">All</button><button class="chip" aria-pressed="false" data-act="gr" data-v="g0">Cluster A</button><button class="chip" aria-pressed="false" data-act="gr" data-v="g1">Cluster B</button><button class="chip" aria-pressed="false" data-act="gr" data-v="g2">Cluster C</button><button class="chip" aria-pressed="false" data-act="gr" data-v="g3">Cluster D</button><button class="chip" aria-pressed="false" data-act="gr" data-v="g4">Unassigned</button></div><div class="card"><div class="row" style="justify-content:space-between"><div><h2>All</h2><div class="muted small">42 units</div></div><div class="big" style="font-size:54px">42<span style="font-size:24px">%</span></div></div><div style="margin-top:8px"><div class="bar"><i class="d" style="width:41.904761904761905%"></i><i class="w" style="width:0.6349206349206349%"></i></div></div><div class="row" style="justify-content:space-between;margin-top:6px"><span class="muted small">Planned 48%, variance -5.4 pts</span><span class="stat warn">Slightly behind</span></div><div class="legend"><span><i class="sw" style="background:var(--done)"></i>Completed / cast</span><span><i class="sw" style="background:var(--wip)"></i>In progress / rebar &amp; shuttering WIP</span><span><i class="sw" style="background:var(--none)"></i>Not started</span></div></div><h2 class="sec">Units<small>tap a unit to see and update its stages</small></h2><div class="vg"><button class="vc" style="--c:var(--cA)" data-act="open" data-v="V32"><div class="t"><b>V-32</b><span>42%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s1" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F slab &amp; beams - Rebar &amp; shuttering WIP<br>Planned 48%</div></button><button class="vc" style="--c:var(--cA)" data-act="open" data-v="V33"><div class="t"><b>V-33</b><span>48%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s1" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">F.F columns - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cA)" data-act="open" data-v="V34"><div class="t"><b>V-34</b><span>53%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">F.F slab &amp; beams - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cA)" data-act="open" data-v="V35"><div class="t"><b>V-35</b><span>62%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s2" title="S.F columns"></i><i class="s1" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">S.F slab &amp; beams - Rebar &amp; shuttering WIP<br>Planned 48%</div></button><button class="vc" style="--c:var(--cA)" data-act="open" data-v="V36"><div class="t"><b>V-36</b><span>57%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">F.F slab &amp; beams - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cA)" data-act="open" data-v="V37"><div class="t"><b>V-37</b><span>45%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s1" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">F.F columns - Rebar &amp; shuttering WIP<br>Planned 48%</div></button><button class="vc" style="--c:var(--cA)" data-act="open" data-v="V38"><div class="t"><b>V-38</b><span>22%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s1" title="Plinth beam ATT &amp; PCC"></i><i class="s0" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Plinth beam ATT &amp; PCC - In progress<br>Planned 48%</div></button><button class="vc" style="--c:var(--cA)" data-act="open" data-v="V39"><div class="t"><b>V-39</b><span>52%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s1" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">F.F slab &amp; beams - Rebar &amp; shuttering WIP<br>Planned 48%</div></button><button class="vc" style="--c:var(--cA)" data-act="open" data-v="V23"><div class="t"><b>V-23</b><span>40%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s1" title="G.F staircase"></i><i class="s1" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F slab &amp; beams - Rebar &amp; shuttering WIP<br>Planned 48%</div></button><button class="vc" style="--c:var(--cA)" data-act="open" data-v="V24"><div class="t"><b>V-24</b><span>20%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s0" title="Plinth beam ATT &amp; PCC"></i><i class="s0" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Soil backfilling (FGL) - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cB)" data-act="open" data-v="V5"><div class="t"><b>V-5</b><span>100%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s2" title="S.F columns"></i><i class="s2" title="S.F slab &amp; beams"></i><i class="s2" title="Head room columns"></i><i class="s2" title="Head room slab &amp; beams"></i><i class="s2" title="G.F block work"></i><i class="s2" title="G.F internal plastering"></i><i class="s2" title="G.F external plastering"></i><i class="s2" title="F.F block work"></i><i class="s2" title="F.F internal plastering"></i><i class="s2" title="F.F external plastering"></i><i class="s2" title="S.F block work"></i><i class="s2" title="S.F internal plastering"></i><i class="s2" title="S.F external plastering"></i></div><div class="now">S.F external plastering - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cB)" data-act="open" data-v="V6"><div class="t"><b>V-6</b><span>37%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F columns - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cB)" data-act="open" data-v="V7"><div class="t"><b>V-7</b><span>80%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s2" title="S.F columns"></i><i class="s2" title="S.F slab &amp; beams"></i><i class="s2" title="Head room columns"></i><i class="s2" title="Head room slab &amp; beams"></i><i class="s2" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s2" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s2" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">S.F block work - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cB)" data-act="open" data-v="V8"><div class="t"><b>V-8</b><span>73%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s2" title="S.F columns"></i><i class="s2" title="S.F slab &amp; beams"></i><i class="s2" title="Head room columns"></i><i class="s2" title="Head room slab &amp; beams"></i><i class="s2" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F block work - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cB)" data-act="open" data-v="V9"><div class="t"><b>V-9</b><span>70%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s2" title="S.F columns"></i><i class="s2" title="S.F slab &amp; beams"></i><i class="s2" title="Head room columns"></i><i class="s2" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Head room slab &amp; beams - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cB)" data-act="open" data-v="V10"><div class="t"><b>V-10</b><span>80%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s2" title="S.F columns"></i><i class="s2" title="S.F slab &amp; beams"></i><i class="s2" title="Head room columns"></i><i class="s2" title="Head room slab &amp; beams"></i><i class="s2" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s2" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s2" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">S.F block work - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cB)" data-act="open" data-v="V11"><div class="t"><b>V-11</b><span>30%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F columns - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cB)" data-act="open" data-v="V12"><div class="t"><b>V-12</b><span>80%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s2" title="S.F columns"></i><i class="s2" title="S.F slab &amp; beams"></i><i class="s2" title="Head room columns"></i><i class="s2" title="Head room slab &amp; beams"></i><i class="s2" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s2" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s2" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">S.F block work - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cB)" data-act="open" data-v="V21"><div class="t"><b>V-21</b><span>13%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s0" title="Columns up to plinth level"></i><i class="s0" title="Soil backfilling (FGL)"></i><i class="s0" title="Plinth beam ATT &amp; PCC"></i><i class="s0" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Pedestals - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cB)" data-act="open" data-v="V22"><div class="t"><b>V-22</b><span>27%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Plinth beam RCC - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V1"><div class="t"><b>V-1</b><span>23%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s0" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Plinth beam ATT &amp; PCC - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V2"><div class="t"><b>V-2</b><span>47%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F slab &amp; beams - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V3"><div class="t"><b>V-3</b><span>50%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">F.F staircase - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V4"><div class="t"><b>V-4</b><span>57%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">F.F slab &amp; beams - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V13"><div class="t"><b>V-13</b><span>50%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">F.F staircase - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V14"><div class="t"><b>V-14</b><span>37%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F columns - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V15"><div class="t"><b>V-15</b><span>40%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F staircase - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V16"><div class="t"><b>V-16</b><span>20%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s0" title="Plinth beam ATT &amp; PCC"></i><i class="s0" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Soil backfilling (FGL) - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V17"><div class="t"><b>V-17</b><span>27%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Plinth beam RCC - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V18"><div class="t"><b>V-18</b><span>37%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F columns - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cC)" data-act="open" data-v="V19"><div class="t"><b>V-19</b><span>43%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F slab &amp; beams - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cD)" data-act="open" data-v="V26"><div class="t"><b>V-26</b><span>43%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F slab &amp; beams - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cD)" data-act="open" data-v="V27"><div class="t"><b>V-27</b><span>57%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s2" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s2" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">F.F slab &amp; beams - Cast<br>Planned 48%</div></button><button class="vc hold" style="--c:var(--cD)" data-act="open" data-v="V28"><div class="t"><b>V-28</b><span>7%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s0" title="Footing RCC"></i><i class="s0" title="Pedestals"></i><i class="s0" title="Columns up to plinth level"></i><i class="s0" title="Soil backfilling (FGL)"></i><i class="s0" title="Plinth beam ATT &amp; PCC"></i><i class="s0" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now"><span class="badge">On hold</span> V-27 Purchased the land of V-28<br>Planned 48%</div></button><button class="vc" style="--c:var(--cD)" data-act="open" data-v="V29"><div class="t"><b>V-29</b><span>33%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Grade slab ATT &amp; PCC - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cD)" data-act="open" data-v="V30"><div class="t"><b>V-30</b><span>33%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Grade slab ATT &amp; PCC - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cD)" data-act="open" data-v="V31"><div class="t"><b>V-31</b><span>7%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s0" title="Footing RCC"></i><i class="s0" title="Pedestals"></i><i class="s0" title="Columns up to plinth level"></i><i class="s0" title="Soil backfilling (FGL)"></i><i class="s0" title="Plinth beam ATT &amp; PCC"></i><i class="s0" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">Footing ATT &amp; PCC - Completed<br>Planned 48%</div></button><button class="vc" style="--c:var(--cD)" data-act="open" data-v="V40"><div class="t"><b>V-40</b><span>50%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s2" title="F.F columns"></i><i class="s2" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">F.F staircase - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cD)" data-act="open" data-v="V41"><div class="t"><b>V-41</b><span>43%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s2" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F slab &amp; beams - Cast<br>Planned 48%</div></button><button class="vc" style="--c:var(--cD)" data-act="open" data-v="V42"><div class="t"><b>V-42</b><span>40%</span></div><div class="strip"><i class="s2" title="Earthwork excavation"></i><i class="s2" title="Footing ATT &amp; PCC"></i><i class="s2" title="Footing RCC"></i><i class="s2" title="Pedestals"></i><i class="s2" title="Columns up to plinth level"></i><i class="s2" title="Soil backfilling (FGL)"></i><i class="s2" title="Plinth beam ATT &amp; PCC"></i><i class="s2" title="Plinth beam RCC"></i><i class="s2" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s2" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s2" title="G.F columns"></i><i class="s2" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now">G.F staircase - Cast<br>Planned 48%</div></button><button class="vc hold" style="--c:var(--cU)" data-act="open" data-v="V20"><div class="t"><b>V-20</b><span>0%</span></div><div class="strip"><i class="s0" title="Earthwork excavation"></i><i class="s0" title="Footing ATT &amp; PCC"></i><i class="s0" title="Footing RCC"></i><i class="s0" title="Pedestals"></i><i class="s0" title="Columns up to plinth level"></i><i class="s0" title="Soil backfilling (FGL)"></i><i class="s0" title="Plinth beam ATT &amp; PCC"></i><i class="s0" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now"><span class="badge">On hold</span> <br>Planned 48%</div></button><button class="vc hold" style="--c:var(--cU)" data-act="open" data-v="V25"><div class="t"><b>V-25</b><span>0%</span></div><div class="strip"><i class="s0" title="Earthwork excavation"></i><i class="s0" title="Footing ATT &amp; PCC"></i><i class="s0" title="Footing RCC"></i><i class="s0" title="Pedestals"></i><i class="s0" title="Columns up to plinth level"></i><i class="s0" title="Soil backfilling (FGL)"></i><i class="s0" title="Plinth beam ATT &amp; PCC"></i><i class="s0" title="Plinth beam RCC"></i><i class="s0" title="Soil backfilled for FGL (after plinth beam)"></i><i class="s0" title="Grade slab ATT &amp; PCC"></i><i class="s0" title="Grade slab RCC"></i><i class="s0" title="G.F columns"></i><i class="s0" title="G.F staircase"></i><i class="s0" title="G.F slab &amp; beams"></i><i class="s0" title="F.F columns"></i><i class="s0" title="F.F staircase"></i><i class="s0" title="F.F slab &amp; beams"></i><i class="s0" title="S.F columns"></i><i class="s0" title="S.F slab &amp; beams"></i><i class="s0" title="Head room columns"></i><i class="s0" title="Head room slab &amp; beams"></i><i class="s0" title="G.F block work"></i><i class="s0" title="G.F internal plastering"></i><i class="s0" title="G.F external plastering"></i><i class="s0" title="F.F block work"></i><i class="s0" title="F.F internal plastering"></i><i class="s0" title="F.F external plastering"></i><i class="s0" title="S.F block work"></i><i class="s0" title="S.F internal plastering"></i><i class="s0" title="S.F external plastering"></i></div><div class="now"><span class="badge">On hold</span> <br>Planned 48%</div></button></div></main></div>
+<div id="layer"></div>
+<div id="toast" class="toast" hidden="">Download is not available in this view.</div>
+
+<script src="./Construction Progress Tracker_files/jszip.min.js.download"></script>
+<script>
+(function(){
+"use strict";
+
+/* ================= Constants and templates ================= */
+var WEIGHT=[0,0.5,1];
+var LS="ptracker-v2", LS_OLD="indis-amara-tracker-v1";
+var LAB={g:["Not started","In progress","Completed"],r:["Not started","Rebar & shuttering WIP","Cast"]};
+var TYPES={
+  villa:{n:"Villa project",d:"Independent villas grouped in clusters"},
+  highrise:{n:"High-rise building",d:"One or more towers, many floors",term:"Tower"},
+  apartment:{n:"Apartment complex",d:"Mid-rise apartment blocks (stilt/G + floors)",term:"Block"},
+  residential:{n:"Residential building",d:"Individual residential building, G + floors",term:"Building"}
+};
+function rng(a,b){var r=[];for(var i=a;i<=b;i++)r.push(i);return r;}
+function S1(k,n,g,t,tr){var o={k:k,n:n,g:g,t:t};if(tr)o.tr=tr;return o;}
+var VILLA_STAGES=[
+ S1("ew","Earthwork excavation","Sub structure","g"),S1("fpcc","Footing ATT & PCC","Sub structure","g"),
+ S1("frcc","Footing RCC","Sub structure","r"),S1("ped","Pedestals","Sub structure","r"),
+ S1("colp","Columns up to plinth level","Sub structure","r"),S1("bf1","Soil backfilling (FGL)","Sub structure","g"),
+ S1("pbpcc","Plinth beam ATT & PCC","Sub structure","g"),S1("pbrcc","Plinth beam RCC","Sub structure","r"),
+ S1("bf2","Soil backfilled for FGL (after plinth beam)","Sub structure","g"),S1("gspcc","Grade slab ATT & PCC","Sub structure","g"),
+ S1("gsrcc","Grade slab RCC","Sub structure","r"),S1("gfc","G.F columns","Ground floor","r"),
+ S1("gfst","G.F staircase","Ground floor","r"),S1("gfsb","G.F slab & beams","Ground floor","r"),
+ S1("ffc","F.F columns","First floor","r"),S1("ffst","F.F staircase","First floor","r"),S1("ffsb","F.F slab & beams","First floor","r"),
+ S1("sfc","S.F columns","Second floor","r"),S1("sfsb","S.F slab & beams","Second floor","r"),
+ S1("hrc","Head room columns","Head room","r"),S1("hrsb","Head room slab & beams","Head room","r"),
+ S1("gfbw","G.F block work","Block work & plastering","g","f"),S1("gfip","G.F internal plastering","Block work & plastering","g","f"),
+ S1("gfep","G.F external plastering","Block work & plastering","g","f"),
+ S1("ffbw","F.F block work","Block work & plastering","g","f"),S1("ffip","F.F internal plastering","Block work & plastering","g","f"),
+ S1("ffep","F.F external plastering","Block work & plastering","g","f"),
+ S1("sfbw","S.F block work","Block work & plastering","g","f"),S1("sfip","S.F internal plastering","Block work & plastering","g","f"),
+ S1("sfep","S.F external plastering","Block work & plastering","g","f")
+];
+var FLOOR_STAGES=[
+ S1("fl_col","Columns & shear walls","Structure","r"),S1("fl_sl","Slab & beams","Structure","r"),
+ S1("fl_st","Staircase & lift core","Structure","r"),
+ S1("fl_bw","Block work","Block work & plastering","g","f"),S1("fl_ip","Internal plastering","Block work & plastering","g","f"),
+ S1("fl_ep","External plastering","Block work & plastering","g","f")
+];
+function foundStages(ft,bs){
+  var a=[S1("fd_ew","Earthwork excavation","Foundation","g")];
+  if(bs>0)a.push(S1("fd_sh","Shoring & dewatering","Foundation","g"));
+  if(ft==="piled")a.push(S1("fd_pil","Piling & pile load test","Foundation","g"));
+  a.push(S1("fd_pcc",ft==="isolated"?"Footing ATT & PCC":"Raft / pile cap ATT & PCC","Foundation","g"));
+  a.push(S1("fd_rcc",ft==="isolated"?"Footing RCC":"Raft / pile cap RCC","Foundation","r"));
+  if(ft==="isolated"){a.push(S1("fd_ped","Pedestals","Foundation","r"),S1("fd_colp","Columns up to plinth level","Foundation","r"),S1("fd_pb","Plinth beam RCC","Foundation","r"));}
+  if(bs>0)a.push(S1("fd_bw","Basement walls & columns","Basement","r"),S1("fd_bs","Basement slab & beams","Basement","r"),S1("fd_wp","Waterproofing & backfilling","Basement","g"));
+  else a.push(S1("fd_bf","Backfilling & plinth filling","Foundation","g"));
+  return a;
+}
+
+/* Hyderabad reference checklist. Edit or extend here. */
+var STD_COMMON=[
+ {id:"c1",c:"Structure and materials",t:"Reinforced concrete design, cover, curing and acceptance testing",r:"IS 456:2000"},
+ {id:"c2",c:"Structure and materials",t:"TMT bars Fe 500D with mill test certificates and sampling",r:"IS 1786:2008"},
+ {id:"c3",c:"Structure and materials",t:"Concrete mix design and ready-mixed concrete",r:"IS 10262:2019, IS 4926"},
+ {id:"c4",c:"Structure and materials",t:"Cement and aggregates (OPC / PPC, coarse and fine aggregate tests)",r:"IS 269, IS 1489 (Part 1), IS 383:2016"},
+ {id:"c5",c:"Structure and materials",t:"Cube sampling, testing and strength acceptance",r:"IS 516 (Part 1), IS 456 cl.15"},
+ {id:"c6",c:"Structure and materials",t:"Hot weather concreting and curing in Hyderabad summers",r:"IS 7861 (Part 1), IS 456 cl.13"},
+ {id:"c7",c:"Structure and materials",t:"Formwork and staging (falsework) design and inspection",r:"IS 14687:1999"},
+ {id:"c8",c:"Structure and materials",t:"Reinforcement detailing and ductile detailing",r:"SP 34, IS 13920:2016"},
+ {id:"c9",c:"Design basis",t:"Seismic design (Hyderabad is in Seismic Zone II; confirm with structural consultant)",r:"IS 1893 (Part 1):2016"},
+ {id:"c10",c:"Design basis",t:"Wind and imposed loads as adopted by the structural designer",r:"IS 875 (Parts 1 to 3)"},
+ {id:"c11",c:"Design basis",t:"Soil investigation report and safe bearing capacity confirmed before foundation",r:"IS 1892, IS 6403, IS 1904"},
+ {id:"c12",c:"Masonry and finishes",t:"Blocks and bricks (AAC, concrete block, fly-ash bricks) test certificates",r:"IS 2185, IS 12894, IS 1905"},
+ {id:"c13",c:"Masonry and finishes",t:"Cement plaster and external rendering",r:"IS 1661, IS 2402"},
+ {id:"c14",c:"Masonry and finishes",t:"Waterproofing of roofs, toilets and basements",r:"IS 3067, IS 2645"},
+ {id:"c15",c:"Masonry and finishes",t:"Anti-termite treatment at plinth",r:"IS 6313 (Parts 1 and 2)"},
+ {id:"c16",c:"Measurement",t:"Quantities measured and certified as per standard method of measurement",r:"IS 1200"},
+ {id:"c17",c:"Site safety and labour",t:"Construction safety plan, scaffolding and excavation safety",r:"NBC 2016 Part 7, IS 3764, IS 4014"},
+ {id:"c18",c:"Site safety and labour",t:"Labour registration and BOCW welfare cess",r:"BOCW Act 1996"},
+ {id:"c19",c:"Approvals (verify current rules)",t:"Building permission and approved plans from the local authority (HMDA / GHMC via TG-bPASS)",r:"HMDA / GHMC"},
+ {id:"c20",c:"Approvals (verify current rules)",t:"RERA registration where the project is covered (land above 500 sq m or more than 8 units)",r:"RERA Act 2016, TG RERA"},
+ {id:"c21",c:"Approvals (verify current rules)",t:"Pollution control consent (CFE before start, CFO before occupation) where applicable",r:"TGPCB"},
+ {id:"c22",c:"Approvals (verify current rules)",t:"Occupancy certificate and utility connections at completion",r:"HMDA / GHMC, HMWSSB, TGSPDCL"}
+];
+var STD_TYPE={
+ villa:[
+  {id:"v1",c:"Villa specific",t:"Isolated or combined footing design checked for the actual SBC at each villa plot",r:"IS 456, IS 1904"},
+  {id:"v2",c:"Villa specific",t:"Plinth protection, plinth beam and grade slab over compacted, treated fill",r:"IS 456, IS 6313"},
+  {id:"v3",c:"Villa specific",t:"Head room and terrace waterproofing with slope and rain water outlets",r:"IS 3067"},
+  {id:"v4",c:"Villa specific",t:"Rainwater harvesting pit and sewage disposal (septic tank or STP for the layout)",r:"Local building rules, NBC 2016 Part 9"},
+  {id:"v5",c:"Villa specific",t:"Electrical wiring and earthing",r:"IS 732:2019, IS 3043:2018"}
+ ],
+ highrise:[
+  {id:"h1",c:"High-rise specific",t:"Structural safety criteria for tall concrete buildings, with independent structural proof check",r:"IS 16700:2017"},
+  {id:"h2",c:"High-rise specific",t:"Wind study or tunnel test where the building height and shape require it",r:"IS 875 (Part 3)"},
+  {id:"h3",c:"High-rise specific",t:"Fire and life safety: staircases, fire lift, refuge areas, wet riser, sprinklers, fire NOC",r:"NBC 2016 Part 4, Telangana Fire Services"},
+  {id:"h4",c:"High-rise specific",t:"Piled or raft foundation: pile load tests, pour planning and temperature control for large pours",r:"IS 2911, IS 2950 (Part 1)"},
+  {id:"h5",c:"High-rise specific",t:"Basement shoring, dewatering and waterproofing",r:"IS 3764, IS 3067"},
+  {id:"h6",c:"High-rise specific",t:"Height clearance from the airport authority where applicable",r:"AAI"},
+  {id:"h7",c:"High-rise specific",t:"Environmental clearance for large built-up area where applicable",r:"SEIAA Telangana"},
+  {id:"h8",c:"High-rise specific",t:"Lifts, tower crane and hoist: installation approval, load test and operator certification",r:"IS 14665, state lift rules"},
+  {id:"h9",c:"High-rise specific",t:"Concrete pumping, cold joint control and floor-to-floor cycle planning",r:"IS 456, project specification"}
+ ],
+ apartment:[
+  {id:"a1",c:"Apartment specific",t:"Fire and life safety for blocks of 15 m height and above, fire NOC where applicable",r:"NBC 2016 Part 4"},
+  {id:"a2",c:"Apartment specific",t:"Stilt and parking level structure, ramps and drainage",r:"IS 456"},
+  {id:"a3",c:"Apartment specific",t:"Lift installation and inspection",r:"IS 14665, state lift rules"},
+  {id:"a4",c:"Apartment specific",t:"Sewage treatment plant, rainwater harvesting and water supply for the complex",r:"NBC 2016 Part 9, HMWSSB"},
+  {id:"a5",c:"Apartment specific",t:"Common area waterproofing, terrace and balcony slopes",r:"IS 3067"},
+  {id:"a6",c:"Apartment specific",t:"Carpet and built-up area as registered under RERA",r:"RERA Act 2016"}
+ ],
+ residential:[
+  {id:"r1",c:"Residential building specific",t:"Stilt or parking floor design and setbacks as per approved plan",r:"HMDA / GHMC"},
+  {id:"r2",c:"Residential building specific",t:"Fire NOC if height reaches the threshold in current rules",r:"NBC 2016 Part 4"},
+  {id:"r3",c:"Residential building specific",t:"Staircase, headroom and terrace parapet as per approved drawings",r:"NBC 2016 Part 3 and 6"},
+  {id:"r4",c:"Residential building specific",t:"Rainwater harvesting and drainage",r:"Local building rules"}
+ ]
+};
+function standardsFor(type){return (STD_TYPE[type]||[]).concat(STD_COMMON);}
+
+/* ================= Small helpers ================= */
+function $(s,e){return (e||document).querySelector(s);}
+function esc(t){return String(t==null?"":t).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function pad(n){return n<10?"0"+n:""+n;}
+function isoOf(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+function today(){return isoOf(new Date());}
+var dcache={};
+function dn(s){if(!s)return NaN;if(dcache[s]===undefined)dcache[s]=Date.parse(s+"T00:00:00Z")/864e5;return dcache[s];}
+function fromDn(n){return new Date(n*864e5).toISOString().slice(0,10);}
+function fmtD(s){if(!s)return "not set";return new Date(s+"T00:00:00Z").toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"UTC"});}
+function fmtM(n){return new Date(n*864e5).toLocaleDateString("en-IN",{month:"short",year:"2-digit",timeZone:"UTC"});}
+function uid(){return "p"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function letter(i){return String.fromCharCode(65+(i%26));}
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function fmt(p){return Math.round(p);}
+function toast(m){var t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true;},2400);}
+function gcolor(p,gid){var i=0;p.groups.forEach(function(g,j){if(g.id===gid)i=j;});var g=grp(p,gid);if(g&&g.name==="Unassigned")return "var(--cU)";return "var(--c"+"ABCDEFGH".charAt(i%8)+")";}
+
+/* ================= Model ================= */
+var S=null;           // {company, projects:{}, del:{}, ts}
+var oldSnap=null;
+function tryImport(){
+  if(!oldSnap||remoteSeen===null||!canWrite)return;
+  var snap=oldSnap;oldSnap=null;
+  if(remoteSeen.indis||S.del.indis||S.projects.indis)return;
+  if(Object.keys(S.projects).some(function(id){return S.projects[id].name==="Indis Amara Villas";}))return;
+  try{
+    var pr=importOld(JSON.parse(snap.data().state));pr.id="indis";
+    S.projects.indis=pr;localSave();dirty.indis=1;queue();render();
+  }catch(e){}
+}
+var dirty={},metaDirty=false,writing=false,db=null,canWrite=true,flushTimer=null,remoteSeen=null;
+var ui={view:"home",pid:null,tab:"overview",group:"all",kind:null,open:null,modal:null,w:null,
+        upd:{kind:null,stage:null,status:2,earlier:false,sel:{},fa:"",fb:""},delArm:false,mkind:null};
+
+function emptyState(){return {company:"",projects:{},del:{},ts:0};}
+function loadLocal(){
+  var st=null;
+  try{var raw=localStorage.getItem(LS);if(raw)st=JSON.parse(raw);}catch(e){}
+  if(!st)st=emptyState();
+  if(!st.projects)st.projects={};if(!st.del)st.del={};
+  if(!Object.keys(st.projects).length){
+    try{var old=localStorage.getItem(LS_OLD);if(old){var pr=importOld(JSON.parse(old));st.projects[pr.id]=pr;}}catch(e){}
+  }
+  return st;
+}
+function localSave(){try{localStorage.setItem(LS,JSON.stringify(S));}catch(e){}}
+function plist(){return Object.keys(S.projects).map(function(i){return S.projects[i];}).sort(function(a,b){return (a.created||"").localeCompare(b.created||"")||a.name.localeCompare(b.name);});}
+function cur(){return S.projects[ui.pid];}
+function grp(p,id){for(var i=0;i<p.groups.length;i++)if(p.groups[i].id===id)return p.groups[i];return null;}
+function ulist(p,gid,kind){
+  return p.uorder.map(function(i){return p.units[i];}).filter(function(u){return (!gid||gid==="all"||u.g===gid)&&(!kind||u.kind===kind);});
+}
+function kinds(p){return Object.keys(p.stages);}
+function stg(p,u){return p.stages[u.kind];}
+function allStages(p){var a=[];kinds(p).forEach(function(k){p.stages[k].forEach(function(s){a.push({s:s,kind:k});});});return a;}
+function term(p){return p.type==="villa"?"Cluster":(TYPES[p.type].term||"Block");}
+function unitWord(p){return p.type==="villa"?"villa":"floor/unit";}
+
+function upct(p,u){var l=stg(p,u),t=0;l.forEach(function(s){t+=WEIGHT[u.s[s.k]|0];});return l.length?t/l.length*100:0;}
+function shiftOf(p,u){var g=grp(p,u.g),sh=g?(+g.lag||0):0;if(u.kind==="floor")sh+=(u.fl-1)*(+p.cfg.cycle||0);return sh;}
+function frac(D,a,b){if(D>=b)return 1;if(D<=a)return 0;return (D-a)/(b-a);}
+function upl(p,u,D){
+  var l=stg(p,u),t=0,sh=shiftOf(p,u);
+  l.forEach(function(s){var pl=p.plan[s.k];if(!pl)return;t+=frac(D,dn(pl[0])+sh,dn(pl[1])+sh);});
+  return l.length?t/l.length*100:0;
+}
+function avgA(p,list){if(!list.length)return 0;var t=0;list.forEach(function(u){t+=upct(p,u);});return t/list.length;}
+function avgP(p,list,D){if(!list.length)return 0;var t=0;list.forEach(function(u){t+=upl(p,u,D);});return t/list.length;}
+function counts(p,list){var c=[0,0,0];list.forEach(function(u){stg(p,u).forEach(function(s){c[u.s[s.k]|0]++;});});return c;}
+function ucounts(p,u){var c=[0,0,0];stg(p,u).forEach(function(s){c[u.s[s.k]|0]++;});return c;}
+function hasPlan(p){return !!(p.start&&p.end&&Object.keys(p.plan).length);}
+function todayD(){return dn(today());}
+function sched(p,list){
+  if(!hasPlan(p))return null;
+  list=list||ulist(p);
+  var a=avgA(p,list),pl=avgP(p,list,todayD()),v=a-pl,lab,cls;
+  if(todayD()<dn(p.start)&&a<1){lab="Not started yet";cls="";}
+  else if(v>=3){lab="Ahead of schedule";cls="ok";}
+  else if(v>=-3){lab="On track";cls="ok";}
+  else if(v>=-10){lab="Slightly behind";cls="warn";}
+  else{lab="Behind schedule";cls="bad";}
+  return {a:a,pl:pl,v:v,lab:lab,cls:cls};
+}
+function latest(p,u){
+  var l=stg(p,u);
+  for(var i=l.length-1;i>=0;i--){var x=u.s[l[i].k]|0;if(x>0)return l[i].n+" - "+LAB[l[i].t][x];}
+  return "Work not started";
+}
+function updHist(p){
+  var t=today(),a=Math.round(avgA(p,ulist(p))*10)/10,h=p.hist;
+  if(h.length&&h[h.length-1][0]===t)h[h.length-1][1]=a;else h.push([t,a]);
+  if(h.length>500)h.splice(1,h.length-500);
+}
+
+/* Schedule baseline */
+function seq(list,a,b,plan){
+  var n=list.length;if(!n)return;
+  var ov=0.6,slice=(b-a)/(1+(n-1)*ov);if(slice<1)slice=1;
+  list.forEach(function(s,i){var st=Math.round(a+i*ov*slice),en=Math.max(Math.round(a+i*ov*slice+slice),st+1);plan[s.k]=[fromDn(st),fromDn(en)];});
+}
+function autoPlan(p){
+  p.plan={};
+  if(!p.start||!p.end||dn(p.end)<=dn(p.start))return;
+  var a=dn(p.start),b=dn(p.end),span=b-a,maxLag=0,maxUp=0;
+  p.groups.forEach(function(g){maxLag=Math.max(maxLag,+g.lag||0);});
+  if(p.stages.unit){seq(p.stages.unit,a,Math.max(a+14,b-maxLag),p.plan);return;}
+  ulist(p).forEach(function(u){if(u.kind==="floor")maxUp=Math.max(maxUp,u.fl-1);});
+  var fo=Math.round(span*0.2);
+  seq(p.stages.found,a,a+fo,p.plan);
+  var fs=a+Math.round(fo*0.85),cyc=+p.cfg.cycle||7,B=b-fs-maxUp*cyc-maxLag;
+  if(B<28)B=28;
+  seq(p.stages.floor,fs,fs+B,p.plan);
+}
+
+/* Build projects */
+function newProj(o){
+  return {id:uid(),name:o.name,client:o.client||"",payer:o.payer||"",loc:o.loc||"Hyderabad, Telangana",type:o.type,
+    start:o.start||"",end:o.end||"",created:today(),ts:Date.now(),cfg:{},groups:[],units:{},uorder:[],stages:{},plan:{},hist:[],std:{},vtypes:[]};
+}
+function addUnit(p,u){p.units[u.id]=u;p.uorder.push(u.id);}
+function buildVillas(p,groupsDef,vtList){
+  p.stages.unit=clone(VILLA_STAGES);
+  var cnt=0;
+  groupsDef.forEach(function(g,gi){
+    var gid="g"+gi;p.groups.push({id:gid,name:g.name,lag:0});
+    g.list.forEach(function(n){
+      addUnit(p,{id:"V"+n,g:gid,kind:"unit",lbl:"V-"+n,num:n,vt:(vtList&&vtList[cnt])||"",h:0,hr:"",rm:"",s:{}});cnt++;
+    });
+  });
+}
+function buildFloors(p,w){
+  var bs=+w.basements||0;
+  p.cfg={cycle:+w.cycle||7,basements:bs,found:w.ftype};
+  p.stages.found=foundStages(w.ftype,bs);
+  p.stages.floor=clone(FLOOR_STAGES);
+  var tw=TYPES[p.type].term;
+  w.blocks.forEach(function(b,bi){
+    var gid="g"+bi,short=letter(bi);
+    p.groups.push({id:gid,name:b.n||(tw+" "+short),lag:bi*(+w.lag||0)});
+    addUnit(p,{id:gid+"-FD",g:gid,kind:"found",lbl:short+"-Found",fl:0,h:0,hr:"",rm:"",s:{}});
+    for(var f=1;f<=(+b.u||0)+1;f++){
+      addUnit(p,{id:gid+"-F"+f,g:gid,kind:"floor",fl:f,lbl:short+"-"+(f===1?"G":(f-1)),h:0,hr:"",rm:"",s:{}});
+    }
+  });
+}
+function buildFromWizard(w){
+  var p=newProj(w);
+  if(w.type==="villa"){
+    var vt=[],list=[],n=0;
+    w.vtypes.forEach(function(t){for(var i=0;i<t.c;i++)vt.push(t.n);});
+    p.vtypes=w.vtypes.map(function(t){return {n:t.n,c:+t.c};});
+    var defs=w.clusters.map(function(c){var l=[];for(var i=0;i<c.c;i++){n++;l.push(n);}return {name:c.n,list:l};});
+    buildVillas(p,defs,vt);
+  }else buildFloors(p,w);
+  autoPlan(p);updHist(p);
+  return p;
+}
+function indisDefs(){
+  return [
+   {name:"Cluster A",list:rng(32,39).concat(rng(23,24))},
+   {name:"Cluster B",list:rng(5,12).concat(rng(21,22))},
+   {name:"Cluster C",list:rng(1,4).concat(rng(13,19))},
+   {name:"Cluster D",list:rng(26,31).concat(rng(40,42))},
+   {name:"Unassigned",list:[20,25]}
+  ];
+}
+function indisProject(){
+  var p=newProj({name:"Indis Amara Villas",client:"Indis",payer:"ICH Ventures Pvt Ltd",type:"villa"});
+  buildVillas(p,indisDefs(),null);
+  p.cfg={};
+  return p;
+}
+function importOld(d){
+  var p=indisProject(),map={A:"g0",B:"g1",C:"g2",D:"g3",U:"g4"};
+  if(d&&d.villas)Object.keys(d.villas).forEach(function(n){
+    var v=d.villas[n],u=p.units["V"+n];if(!u){return;}
+    u.s=v.s||{};u.h=v.h?1:0;u.hr=v.hr||"";u.rm=v.rm||"";if(map[v.c])u.g=map[v.c];
+  });
+  p.created="2026-10-05";updHist(p);return p;
+}
+
+/* ================= Persistence ================= */
+function saveP(p){p.ts=Date.now();updHist(p);S.ts=Date.now();localSave();dirty[p.id]=1;queue();}
+function saveMeta(){S.ts=Date.now();metaDirty=true;localSave();queue();}
+function queue(){if(!db)return;clearTimeout(flushTimer);flushTimer=setTimeout(flush,600);}
+function flush(){
+  if(!db||!canWrite)return;
+  if(writing){flushTimer=setTimeout(flush,300);return;}
+  var ids=Object.keys(dirty),job=Promise.resolve();
+  if(!ids.length&&!metaDirty)return;
+  writing=true;
+  ids.forEach(function(id){
+    delete dirty[id];
+    job=job.then(function(){
+      var p=S.projects[id];
+      if(p)return db.collection("projects").doc(id).set({data:JSON.stringify(p)});
+      return db.collection("projects").doc(id).delete();
+    });
+  });
+  if(metaDirty){metaDirty=false;job=job.then(function(){return db.doc("meta/main").set({company:S.company,del:JSON.stringify(S.del),ts:S.ts});});}
+  job.then(function(){writing=false;if(Object.keys(dirty).length||metaDirty)flush();})
+     .catch(function(){writing=false;toast("Saved on this device only. Sync failed.");});
+}
+function applyRemote(qs){
+  var seen={},changed=false;
+  qs.docs.forEach(function(d){
+    seen[d.id]=1;
+    if(S.del[d.id]){dirty[d.id]=1;return;}
+    if(dirty[d.id])return;
+    try{
+      var p=JSON.parse(d.data().data),lp=S.projects[d.id];
+      if(!lp||(p.ts||0)>(lp.ts||0)){S.projects[d.id]=p;changed=true;}
+    }catch(e){}
+  });
+  if(remoteSeen===null){ // first snapshot: push local-only projects
+    Object.keys(S.projects).forEach(function(id){if(!seen[id]&&!S.del[id])dirty[id]=1;});
+  }
+  remoteSeen=seen;
+  tryImport();
+  if(changed){localSave();render();}
+  if(Object.keys(dirty).length)queue();
+}
+function applyMeta(snap){
+  if(snap.exists){
+    var m=snap.data();
+    if(m.company&&!S.company){S.company=m.company;localSave();render();}
+    try{var d=JSON.parse(m.del||"{}");Object.keys(d).forEach(function(k){S.del[k]=d[k];});}catch(e){}
+  }else if(S.company){metaDirty=true;queue();}
+}
+
+/* ================= Rendering: shared bits ================= */
+function legend(){
+  return '<div class="legend"><span><i class="sw" style="background:var(--done)"></i>Completed / cast</span>'+
+   '<span><i class="sw" style="background:var(--wip)"></i>In progress / rebar &amp; shuttering WIP</span>'+
+   '<span><i class="sw" style="background:var(--none)"></i>Not started</span></div>';
+}
+function bar(c,total){total=total||1;return '<div class="bar"><i class="d" style="width:'+(c[2]/total*100)+'%"></i><i class="w" style="width:'+(c[1]/total*100)+'%"></i></div>';}
+function pbar(a,pl){
+  return '<div class="bar"><i class="d" style="width:'+a+'%"></i></div>'+(pl==null?'':'<div class="bar pl"><i style="width:'+pl+'%"></i></div>');
+}
+function statChip(s){return s?'<span class="stat '+s.cls+'">'+s.lab+'</span>':'<span class="stat">No schedule</span>';}
+function varTxt(s){return s?(s.v>=0?"+":"")+s.v.toFixed(1)+" pts":"-";}
+
+function curve(p){
+  var W=640,H=270,L=40,R=14,T=14,B=30;
+  if(!hasPlan(p))return '<div class="note">Set the project start and completion dates (Settings tab) to see the planned S-curve.</div>';
+  var a=dn(p.start),b=Math.max(dn(p.end),todayD()),span=Math.max(b-a,1),step=Math.max(1,Math.ceil(span/60)),list=ulist(p),pts=[];
+  for(var d=a;d<b;d+=step)pts.push(d);pts.push(b);
+  function X(d){return L+(d-a)/span*(W-L-R);}
+  function Y(v){return T+(100-v)/100*(H-T-B);}
+  var pl=pts.map(function(d,i){return (i?"L":"M")+X(d).toFixed(1)+" "+Y(avgP(p,list,d)).toFixed(1);}).join(" ");
+  var h=p.hist.slice().sort(function(x,y){return x[0]<y[0]?-1:1;}).filter(function(e){return dn(e[0])>=a-1;});
+  var ac=h.map(function(e,i){return (i?"L":"M")+X(Math.max(dn(e[0]),a)).toFixed(1)+" "+Y(e[1]).toFixed(1);}).join(" ");
+  var s='<svg class="crv" viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Planned versus actual progress curve">';
+  [0,25,50,75,100].forEach(function(v){s+='<line class="gl" x1="'+L+'" x2="'+(W-R)+'" y1="'+Y(v)+'" y2="'+Y(v)+'"/><text x="'+(L-6)+'" y="'+(Y(v)+4)+'" text-anchor="end">'+v+'%</text>';});
+  for(var i=0;i<=5;i++){var dd=a+span*i/5;s+='<text x="'+X(dd).toFixed(1)+'" y="'+(H-8)+'" text-anchor="middle">'+fmtM(dd)+'</text>';}
+  s+='<path class="pl" d="'+pl+'"/>';
+  if(ac){s+='<path class="ac" d="'+ac+'"/>';}
+  if(h.length){var le=h[h.length-1];s+='<circle class="ap" cx="'+X(Math.max(dn(le[0]),a)).toFixed(1)+'" cy="'+Y(le[1]).toFixed(1)+'" r="4.5"/>';}
+  var tx=X(todayD());
+  if(todayD()>=a&&todayD()<=b)s+='<line class="td" x1="'+tx+'" x2="'+tx+'" y1="'+T+'" y2="'+(H-B)+'"/><text class="tdt" x="'+tx+'" y="'+(T+2)+'" text-anchor="middle" style="fill:var(--bad)">Today</text>';
+  s+='</svg><div class="legend"><span><i class="sw" style="background:var(--ink);opacity:.6"></i>Planned</span><span><i class="sw" style="background:var(--done)"></i>Actual (recorded when progress is updated)</span></div>';
+  return s;
+}
+
+/* ================= Home ================= */
+function vHome(){
+  var ps=plist();
+  var h='<header class="top"><div><h1>'+esc(S.company||"Construction Progress Tracker")+'</h1><div class="sub">Project progress tracker, planned versus actual</div></div>'+
+   '<div class="tools"><button class="btn" data-act="company">Company name</button><button class="btn" data-act="theme">Light / Dark</button>'+
+   '<button class="btn primary" data-act="newp">New project</button></div></header><main class="wrap">';
+  if(!ps.length){
+    h+='<div class="card empty"><h2 style="font-size:28px">Start with your first project</h2><p class="muted">Enter the project name, client, payment company and project type. The tracker builds the villas, towers and floors for you.</p>'+
+      '<div class="row" style="justify-content:center"><button class="btn primary" data-act="newp">New project</button><button class="btn" data-act="indis">Load Indis Amara Villas (42 villas)</button></div></div>';
+    return h+'</main>';
+  }
+  var sc=ps.map(function(p){return sched(p);}),beh=sc.filter(function(s){return s&&s.cls==="bad";}).length;
+  var aa=0;ps.forEach(function(p){aa+=avgA(p,ulist(p));});aa/=ps.length;
+  h+='<div class="card" style="margin-top:14px"><div class="kpis"><div class="kpi"><b>'+ps.length+'</b><span>projects</span></div>'+
+   '<div class="kpi"><b>'+fmt(aa)+'%</b><span>average actual progress</span></div>'+
+   '<div class="kpi"><b>'+beh+'</b><span>behind schedule</span></div>'+
+   '<div class="kpi"><b>'+ps.reduce(function(t,p){return t+ulist(p).length;},0)+'</b><span>units tracked</span></div></div></div>';
+  h+='<h2 class="sec">Projects</h2><div class="grid g4">';
+  ps.forEach(function(p,i){
+    var l=ulist(p),a=avgA(p,l),s=sc[i],g=p.groups.length;
+    h+='<button class="card pcard" style="border-top-color:'+(s&&s.cls==="bad"?'var(--bad)':s&&s.cls==="warn"?'var(--wip)':'var(--done)')+'" data-act="openp" data-v="'+p.id+'">'+
+     '<div class="row" style="justify-content:space-between;flex-wrap:nowrap;align-items:flex-start"><div><h3>'+esc(p.name)+'</h3><div class="muted small">Client: '+esc(p.client||"-")+'</div><div class="muted small">Payments: '+esc(p.payer||"-")+'</div></div><div class="pct">'+fmt(a)+'%</div></div>'+
+     '<div style="margin:10px 0 4px">'+pbar(a,s?s.pl:null)+'</div>'+
+     '<div class="row" style="justify-content:space-between"><span class="muted small">'+(s?'Planned '+fmt(s.pl)+'%':'Set dates for schedule')+'</span>'+statChip(s)+'</div>'+
+     '<div class="muted small" style="margin-top:6px">'+TYPES[p.type].n+', '+g+' '+(p.type==="villa"?'cluster':term(p).toLowerCase())+(g===1?'':'s')+', '+l.length+' units, '+esc(p.loc)+'</div></button>';
+  });
+  h+='</div>';
+  if(ps.length>1){
+    h+='<h2 class="sec">Actual versus planned<small>top bar: actual, thin bar: planned</small></h2><div class="card">';
+    ps.forEach(function(p,i){var a=avgA(p,ulist(p)),s=sc[i];
+      h+='<div class="row" style="flex-wrap:nowrap;margin:8px 0"><div style="min-width:140px;max-width:200px;font-weight:600">'+esc(p.name)+'</div><div style="flex:1">'+pbar(a,s?s.pl:null)+'</div><b style="min-width:44px;text-align:right">'+fmt(a)+'%</b></div>';});
+    h+='</div>';
+  }
+  return h+'</main>';
+}
+
+/* ================= Project views ================= */
+var TABS=[["overview","Overview"],["groups","Units"],["matrix","Matrix"],["update","Update progress"],["schedule","Schedule"],["standards","Standards"],["settings","Settings"]];
+function vProjectShell(p,body){
+  var s=sched(p);
+  var h='<header class="top"><div><button class="btn" data-act="home" style="margin-bottom:8px">All projects</button><h1>'+esc(p.name)+'</h1>'+
+   '<div class="sub">Client: '+esc(p.client||"-")+' &nbsp;|&nbsp; Payments: '+esc(p.payer||"-")+' &nbsp;|&nbsp; '+TYPES[p.type].n+' &nbsp;|&nbsp; '+esc(p.loc)+'</div></div>'+
+   '<div class="tools">'+statChip(s)+'<button class="btn primary" data-act="xlsx">Export Excel</button><button class="btn" data-act="csv">Export CSV</button><button class="btn" data-act="theme">Light / Dark</button></div></header>'+
+   '<nav class="tabs"><div class="in" role="tablist">'+TABS.map(function(t){return '<button role="tab" aria-selected="'+(ui.tab===t[0])+'" data-act="tab" data-v="'+t[0]+'">'+(t[0]==="groups"?(p.type==="villa"?"Villas":"Towers & floors"):t[1])+'</button>';}).join("")+'</div></nav>'+
+   '<main class="wrap">'+body+'</main>';
+  return h;
+}
+function gchips(p){
+  var h='<div class="chips"><button class="chip" aria-pressed="'+(ui.group==="all")+'" data-act="gr" data-v="all">All</button>';
+  p.groups.forEach(function(g){h+='<button class="chip" aria-pressed="'+(ui.group===g.id)+'" data-act="gr" data-v="'+g.id+'">'+esc(g.name)+'</button>';});
+  return h+'</div>';
+}
+function kchips(p){
+  var ks=kinds(p);if(ks.length<2)return "";
+  var cur=ui.mkind&&ks.indexOf(ui.mkind)>=0?ui.mkind:"floor";
+  return '<div class="chips">'+ks.map(function(k){return '<button class="chip" aria-pressed="'+(cur===k)+'" data-act="mk" data-v="'+k+'">'+(k==="found"?"Foundation & basement":"Floors")+'</button>';}).join("")+'</div>';
+}
+function curKind(p){var ks=kinds(p);return ks.length<2?ks[0]:(ui.mkind&&ks.indexOf(ui.mkind)>=0?ui.mkind:"floor");}
+
+function vOverview(p){
+  var all=ulist(p),c=counts(p,all),tot=c[0]+c[1]+c[2],s=sched(p),a=avgA(p,all);
+  var hold=all.filter(function(u){return u.h;}).length,doneU=all.filter(function(u){return upct(p,u)>=100;}).length;
+  var h='';
+  if(!hasPlan(p))h+='<div class="note" style="margin-top:14px">Schedule tracking is off. Open <b>Settings</b> to set the project start and completion dates, then check the <b>Schedule</b> tab.</div>';
+  h+='<div class="hero"><div class="card"><div class="muted">Actual progress, '+all.length+' units</div><div class="big">'+fmt(a)+'<span>%</span></div>'+
+   '<div style="margin-top:12px">'+pbar(a,s?s.pl:null)+'</div>'+
+   '<div class="muted small" style="margin-top:6px">'+(s?'Planned today: '+fmt(s.pl)+'%':'Thin bar shows planned progress once dates are set')+'</div>'+legend()+'</div>'+
+   '<div class="card"><div class="kpis">'+
+   '<div class="kpi"><b>'+(s?varTxt(s):'-')+'</b><span>variance vs plan</span></div>'+
+   '<div class="kpi"><b>'+c[2]+'</b><span>stages completed of '+tot+'</span></div>'+
+   '<div class="kpi"><b>'+c[1]+'</b><span>stages in progress / WIP</span></div>'+
+   '<div class="kpi"><b>'+hold+'</b><span>units on hold</span></div>'+
+   '<div class="kpi"><b>'+doneU+'</b><span>units fully complete</span></div>'+
+   '<div class="kpi"><b>'+(p.end?Math.round(dn(p.end)-todayD()):'-')+'</b><span>days to planned completion</span></div></div>'+
+   '<div class="muted small" style="margin-top:12px">A stage counts 100% when completed or cast, 50% when in progress or rebar and shuttering is WIP, 0% when not started.</div></div></div>';
+  h+='<h2 class="sec">Planned versus actual curve</h2><div class="card">'+curve(p)+'</div>';
+
+  h+='<h2 class="sec">'+(p.type==="villa"?'Clusters':'Towers / blocks')+'</h2><div class="grid g4">';
+  p.groups.forEach(function(g){
+    var l=ulist(p,g.id);if(!l.length)return;
+    var ga=avgA(p,l),gs=sched(p,l),hd=l.filter(function(u){return u.h;}).length;
+    h+='<button class="card cc" style="--c:'+gcolor(p,g.id)+'" data-act="goto" data-v="'+g.id+'"><div class="row" style="justify-content:space-between;align-items:flex-end"><h3>'+esc(g.name)+'</h3><div class="pct">'+fmt(ga)+'%</div></div>'+
+     '<div style="margin:8px 0">'+pbar(ga,gs?gs.pl:null)+'</div><div class="row" style="justify-content:space-between"><span class="muted small">'+l.length+' units'+(hd?', '+hd+' on hold':'')+'</span>'+statChip(gs)+'</div></button>';
+  });
+  h+='</div>';
+
+  if(p.type!=="villa"){
+    var maxF=0;all.forEach(function(u){if(u.kind==="floor")maxF=Math.max(maxF,u.fl);});
+    h+='<h2 class="sec">Progress by floor<small>average of all towers; line marks planned</small></h2><div class="card"><div class="fch">';
+    var lab='';
+    for(var f=1;f<=maxF;f++){
+      var l=all.filter(function(u){return u.kind==="floor"&&u.fl===f;}),fa=avgA(p,l),fp=hasPlan(p)?avgP(p,l,todayD()):null;
+      h+='<div class="col" title="Floor '+(f===1?'G':f-1)+': '+fmt(fa)+'%"><i style="height:'+fa+'%"></i>'+(fp==null?'':'<u style="bottom:'+fp+'%"></u>')+'</div>';
+      lab+='<span>'+((f===1||(f-1)%5===0)?(f===1?'G':f-1):'')+'</span>';
+    }
+    h+='</div><div class="fl">'+lab+'</div></div>';
+  }else if(p.vtypes.length>1){
+    h+='<h2 class="sec">By villa type</h2><div class="card">';
+    p.vtypes.forEach(function(t){var l=all.filter(function(u){return u.vt===t.n;});if(!l.length)return;var ta=avgA(p,l),tp=hasPlan(p)?avgP(p,l,todayD()):null;
+      h+='<div class="row" style="flex-wrap:nowrap;margin:8px 0"><div style="min-width:130px;font-weight:600">'+esc(t.n)+' <span class="muted small">('+l.length+')</span></div><div style="flex:1">'+pbar(ta,tp)+'</div><b style="min-width:44px;text-align:right">'+fmt(ta)+'%</b></div>';});
+    h+='</div>';
+  }
+
+  h+='<h2 class="sec">Progress by stage</h2><div class="card"><div class="lv">';
+  var lastG="";
+  allStages(p).slice().reverse().forEach(function(e){
+    var s2=e.s,l=all.filter(function(u){return u.kind===e.kind;}),cs=[0,0,0],pp=0;
+    l.forEach(function(u){cs[u.s[s2.k]|0]++;});
+    if(hasPlan(p)&&p.plan[s2.k]){l.forEach(function(u){var sh=shiftOf(p,u);pp+=frac(todayD(),dn(p.plan[s2.k][0])+sh,dn(p.plan[s2.k][1])+sh);});pp=l.length?pp/l.length*100:0;}
+    var key=e.kind+s2.g;
+    if(key!==lastG){h+='<div class="grp">'+esc(s2.g)+'</div>';lastG=key;}
+    h+='<div class="lab">'+esc(s2.n)+'</div><div>'+bar(cs,l.length)+(hasPlan(p)?'<div class="bar pl"><i style="width:'+pp+'%"></i></div>':'')+'</div><div class="num">'+cs[2]+' done, '+cs[1]+' WIP'+(hasPlan(p)?'<br>plan '+fmt(pp)+'%':'')+'</div>';
+  });
+  h+='</div></div>';
+  return h;
+}
+
+function unitCard(p,u){
+  var s=hasPlan(p)?avgP(p,[u],todayD()):null,a=upct(p,u);
+  return '<button class="vc'+(u.h?' hold':'')+'" style="--c:'+gcolor(p,u.g)+'" data-act="open" data-v="'+esc(u.id)+'"><div class="t"><b>'+esc(u.lbl)+'</b><span>'+fmt(a)+'%</span></div>'+
+   '<div class="strip">'+stg(p,u).map(function(x){return '<i class="s'+(u.s[x.k]|0)+'" title="'+esc(x.n)+'"></i>';}).join("")+'</div>'+
+   '<div class="now">'+(u.h?'<span class="badge">On hold</span> '+esc(u.hr):esc(latest(p,u)))+(s!=null?'<br>Planned '+fmt(s)+'%':'')+'</div></button>';
+}
+function vGroups(p){
+  var ks=kinds(p),kind=ks.length>1?curKind(p):null,l=ulist(p,ui.group,kind),c=counts(p,l);
+  var h=gchips(p)+kchips(p);
+  var s=sched(p,l);
+  h+='<div class="card"><div class="row" style="justify-content:space-between"><div><h2>'+(ui.group==="all"?"All":esc(grp(p,ui.group).name))+'</h2><div class="muted small">'+l.length+' units</div></div><div class="big" style="font-size:54px">'+fmt(avgA(p,l))+'<span style="font-size:24px">%</span></div></div>'+
+   '<div style="margin-top:8px">'+bar(c,c[0]+c[1]+c[2])+'</div>'+(s?'<div class="row" style="justify-content:space-between;margin-top:6px"><span class="muted small">Planned '+fmt(s.pl)+'%, variance '+varTxt(s)+'</span>'+statChip(s)+'</div>':'')+legend()+'</div>';
+  h+='<h2 class="sec">Units<small>tap a unit to see and update its stages</small></h2><div class="vg">'+l.map(function(u){return unitCard(p,u);}).join("")+'</div>';
+  return h;
+}
+
+function vMatrix(p){
+  var ks=kinds(p),kind=ks.length>1?curKind(p):ks[0],l=ulist(p,ui.group,kind),sl=p.stages[kind];
+  var h=gchips(p)+kchips(p)+legend()+'<div class="muted small" style="margin-bottom:8px">Tap a cell to cycle: not started, in progress, completed.</div><div class="mx-wrap"><table class="mx"><thead><tr><th class="vn">Unit</th>';
+  sl.forEach(function(s){h+='<th title="'+esc(s.g)+'"><span>'+esc(s.n)+'</span></th>';});
+  h+='<th style="min-width:54px"><span>Progress</span></th></tr></thead><tbody>';
+  l.forEach(function(u){
+    h+='<tr class="'+(u.h?'hold':'')+'"><td class="vn"><button class="btn" style="border-left:5px solid '+gcolor(p,u.g)+';padding:3px 8px" data-act="open" data-v="'+esc(u.id)+'">'+esc(u.lbl)+'</button>'+(u.h?' <span class="badge">H</span>':'')+'</td>';
+    sl.forEach(function(s){var x=u.s[s.k]|0;h+='<td class="c"><button class="cell s'+x+'" aria-label="'+esc(u.lbl+' '+s.n+': '+LAB[s.t][x])+'" data-act="cyc" data-n="'+esc(u.id)+'" data-k="'+s.k+'"></button></td>';});
+    h+='<td class="pc">'+fmt(upct(p,u))+'%</td></tr>';
+  });
+  return h+'</tbody></table></div>';
+}
+
+function vUpdate(p){
+  var U=ui.upd,ks=kinds(p);
+  if(!U.kind||ks.indexOf(U.kind)<0)U.kind=curKind(p);
+  var sl=p.stages[U.kind];
+  if(!U.stage||!sl.some(function(s){return s.k===U.stage;}))U.stage=sl[0].k;
+  var s=sl.filter(function(x){return x.k===U.stage;})[0];
+  var h='';
+  if(ks.length>1)h+='<div class="chips">'+ks.map(function(k){return '<button class="chip" aria-pressed="'+(U.kind===k)+'" data-act="uk" data-v="'+k+'">'+(k==="found"?"Foundation & basement":"Floors")+'</button>';}).join("")+'</div>';
+  h+='<div class="grid g2"><div class="card"><h2>1. Choose the work</h2><div class="field"><label for="stg">Stage</label><select id="stg" data-act="stage">';
+  var lastG="";
+  sl.forEach(function(x){
+    if(x.g!==lastG){if(lastG)h+='</optgroup>';h+='<optgroup label="'+esc(x.g)+'">';lastG=x.g;}
+    h+='<option value="'+x.k+'"'+(x.k===U.stage?' selected':'')+'>'+esc(x.n)+'</option>';
+  });
+  h+='</optgroup></select></div><div class="field"><span class="lbl">Status</span><div class="seg">';
+  LAB[s.t].forEach(function(lb,i){h+='<button class="b'+i+'" aria-pressed="'+(U.status===i)+'" data-act="status" data-v="'+i+'">'+lb+'</button>';});
+  h+='</div></div><label class="row" style="cursor:pointer"><input type="checkbox" data-act="earlier"'+(U.earlier?' checked':'')+'> Also mark earlier stages of the same type (structure or block work and plastering) as completed</label></div>';
+  h+='<div class="card"><h2>2. Choose units</h2><div class="chips">';
+  p.groups.forEach(function(g){h+='<button class="chip" aria-pressed="false" data-act="selg" data-v="'+g.id+'">All of '+esc(g.name)+'</button>';});
+  h+='<button class="chip" aria-pressed="false" data-act="selall">Select all</button><button class="chip" aria-pressed="false" data-act="selnone">Clear</button></div>';
+  if(U.kind==="floor"){
+    h+='<div class="row" style="margin:6px 0"><span>Floors</span><input type="number" min="1" style="width:84px" placeholder="from" data-act="fa" value="'+esc(U.fa)+'"><span>to</span><input type="number" min="1" style="width:84px" placeholder="to" data-act="fb" value="'+esc(U.fb)+'"><button class="btn" data-act="selrange">Select range in all</button></div><div class="muted small">Floor numbers: 0 is ground, 1 is first floor and so on.</div>';
+  }
+  p.groups.forEach(function(g){
+    var l=ulist(p,g.id,U.kind);if(!l.length)return;
+    h+='<div class="lbl" style="margin-top:10px;color:var(--muted)">'+esc(g.name)+'</div><div class="vpick">';
+    l.forEach(function(u){h+='<label style="--c:'+gcolor(p,g.id)+'"><input type="checkbox" data-act="pick" data-v="'+esc(u.id)+'"'+(U.sel[u.id]?' checked':'')+'>'+esc(u.lbl)+'</label>';});
+    h+='</div>';
+  });
+  var cnt=Object.keys(U.sel).filter(function(n){return U.sel[n]&&p.units[n]&&p.units[n].kind===U.kind;}).length;
+  h+='</div></div><div class="card" style="margin-top:12px"><div class="row" style="justify-content:space-between"><div><b>3. Apply</b><div class="muted small">'+cnt+' unit'+(cnt===1?'':'s')+' selected for: '+esc(s.n)+' = '+LAB[s.t][U.status]+'</div></div><button class="btn primary" data-act="apply">Update '+cnt+' unit'+(cnt===1?'':'s')+'</button></div></div>';
+  return h;
+}
+
+function vSchedule(p){
+  var h='';
+  if(!p.start||!p.end)h+='<div class="note">Set the project start and completion dates in <b>Settings</b> first. The tracker then builds a baseline schedule you can adjust here.</div>';
+  var sc=sched(p);
+  h+='<div class="card" style="margin-top:12px"><div class="row" style="justify-content:space-between"><div><h2>Schedule baseline</h2><div class="muted small">'+fmtD(p.start)+' to '+fmtD(p.end)+'</div></div>'+(sc?'<div style="text-align:right">'+statChip(sc)+'<div class="muted small">Actual '+fmt(sc.a)+'% vs planned '+fmt(sc.pl)+'%</div></div>':'')+'</div>';
+  if(p.type!=="villa"){
+    h+='<div class="row" style="margin-top:10px"><label>Days per floor cycle <input type="number" min="1" data-act="cfg" data-f="cycle" value="'+esc(p.cfg.cycle)+'"></label></div><div class="muted small">Each upper floor starts this many days after the floor below. Typical slab cycles are 7 to 14 days.</div>';
+  }
+  h+='<div style="margin-top:10px"><div class="lbl">Start delay by '+(p.type==="villa"?'cluster':term(p).toLowerCase())+' (days after project start)</div><div class="row">';
+  p.groups.forEach(function(g){h+='<label style="min-width:130px">'+esc(g.name)+'<input type="number" min="0" data-act="glag" data-g="'+g.id+'" value="'+(+g.lag||0)+'"></label>';});
+  h+='</div></div><div class="row" style="margin-top:12px"><button class="btn primary" data-act="replan">Re-distribute dates automatically</button></div><div class="muted small" style="margin-top:6px">This replaces all dates below, using the project start, completion, floor cycle and delays above.</div></div>';
+  kinds(p).forEach(function(k){
+    h+='<h2 class="sec">'+(k==="unit"?'Stages (each villa)':k==="found"?'Foundation and basement stages (each '+term(p).toLowerCase()+')':'Floor stages (floor 1 baseline, upper floors shift by the floor cycle)')+'</h2><div class="card" style="overflow:auto"><table class="tbl"><thead><tr><th>Stage</th><th>Planned start</th><th>Planned finish</th><th>Actual</th><th>Planned today</th></tr></thead><tbody>';
+    var l=ulist(p,"all",k);
+    p.stages[k].forEach(function(s){
+      var pl=p.plan[s.k]||["",""],a=0,pp=0,sh;
+      l.forEach(function(u){a+=WEIGHT[u.s[s.k]|0];if(p.plan[s.k]){sh=shiftOf(p,u);pp+=frac(todayD(),dn(pl[0])+sh,dn(pl[1])+sh);}});
+      a=l.length?a/l.length*100:0;pp=l.length?pp/l.length*100:0;
+      h+='<tr><td>'+esc(s.n)+'</td><td><input type="date" data-act="plan" data-k="'+s.k+'" data-i="0" value="'+pl[0]+'"></td><td><input type="date" data-act="plan" data-k="'+s.k+'" data-i="1" value="'+pl[1]+'"></td><td>'+fmt(a)+'%</td><td>'+(p.plan[s.k]?fmt(pp)+'%':'-')+'</td></tr>';
+    });
+    h+='</tbody></table></div>';
+  });
+  return h;
+}
+
+function vStandards(p){
+  var items=standardsFor(p.type),done=items.filter(function(i){return p.std[i.id];}).length;
+  var h='<div class="card" style="margin-top:12px"><div class="row" style="justify-content:space-between"><div><h2>Hyderabad standards and approvals checklist</h2><div class="muted small">'+TYPES[p.type].n+'. Tick items once verified for this project.</div></div><div class="big" style="font-size:44px">'+done+'<span style="font-size:22px"> / '+items.length+'</span></div></div>'+
+   '<div class="note" style="margin-top:10px">This is a working reference list, not legal or structural advice. Confirm thresholds, applicable codes and current notifications with HMDA / GHMC, TG RERA, the fire department and your structural consultant before relying on it.</div></div>';
+  var cats=[];items.forEach(function(i){if(cats.indexOf(i.c)<0)cats.push(i.c);});
+  cats.forEach(function(c){
+    h+='<h2 class="sec">'+esc(c)+'</h2><div class="card">';
+    items.filter(function(i){return i.c===c;}).forEach(function(i){
+      h+='<label class="std"><input type="checkbox" data-act="std" data-v="'+i.id+'"'+(p.std[i.id]?' checked':'')+'><span><b>'+esc(i.t)+'</b><br><span class="ref">'+esc(i.r)+'</span></span></label>';
+    });
+    h+='</div>';
+  });
+  return h;
+}
+
+function vSettings(p){
+  function f(label,field,type,val){return '<div class="field"><label>'+label+'<input type="'+type+'" data-act="pset" data-f="'+field+'" value="'+esc(val)+'"></label></div>';}
+  var h='<div class="grid g2"><div class="card"><h2>Project details</h2>'+f("Project name","name","text",p.name)+f("Client","client","text",p.client)+f("Payment company","payer","text",p.payer)+f("Location","loc","text",p.loc)+
+   f("Planned start","start","date",p.start)+f("Planned completion","end","date",p.end)+
+   '<div class="muted small">Type: '+TYPES[p.type].n+'. '+ulist(p).length+' units, '+p.groups.length+' '+(p.type==="villa"?'clusters':term(p).toLowerCase()+'s')+'.</div></div>'+
+   '<div class="card"><h2>Project data</h2><p class="muted">Export the full progress with charts to Excel, or remove this project.</p><div class="row"><button class="btn primary" data-act="xlsx">Export Excel</button><button class="btn" data-act="csv">Export CSV</button></div>'+
+   '<hr style="border:0;border-top:1px solid var(--line);margin:16px 0"><button class="btn danger'+(ui.delArm?' armed':'')+'" data-act="delp">'+(ui.delArm?'Tap again to delete this project for good':'Delete project')+'</button></div></div>';
+  return h;
+}
+
+function vDrawer(p){
+  var u=ui.open&&p?p.units[ui.open]:null;if(!u)return "";
+  var h='<div class="scrim" data-act="closebg"><div class="drawer" role="dialog" aria-label="'+esc(u.lbl)+'">'+
+   '<div class="row" style="justify-content:space-between"><div><h2 style="font-size:32px">'+esc(u.lbl)+'</h2><div class="muted">'+fmt(upct(p,u))+'% complete'+(hasPlan(p)?', planned '+fmt(upl(p,u,todayD()))+'%':'')+'</div></div><button class="btn" data-act="close">Close</button></div>'+
+   '<div style="margin:10px 0">'+bar(ucounts(p,u),stg(p,u).length)+'</div>'+
+   '<div class="grid" style="grid-template-columns:1fr 1fr"><div class="field"><label for="ugr">'+(p.type==="villa"?'Cluster':term(p))+'</label><select id="ugr" data-act="ugr">'+
+   p.groups.map(function(g){return '<option value="'+g.id+'"'+(u.g===g.id?' selected':'')+'>'+esc(g.name)+'</option>';}).join("")+'</select></div>'+
+   '<div class="field"><span class="lbl">Hold (drawing or design change)</span><div class="seg"><button class="b0" aria-pressed="'+(!u.h)+'" data-act="hold" data-v="0">Active</button><button class="b1" aria-pressed="'+(!!u.h)+'" data-act="hold" data-v="1">On hold</button></div></div></div>';
+  if(p.type==="villa"&&p.vtypes.length)h+='<div class="field"><label for="uvt">Villa type</label><select id="uvt" data-act="uvt"><option value="">Not set</option>'+p.vtypes.map(function(t){return '<option'+(u.vt===t.n?' selected':'')+'>'+esc(t.n)+'</option>';}).join("")+'</select></div>';
+  h+='<div class="field"><label for="hr">Hold reason</label><input type="text" id="hr" data-act="hr" value="'+esc(u.hr)+'" placeholder="e.g. Drawing revision pending"></div>'+
+   '<div class="field"><label for="rm">Remarks</label><textarea id="rm" rows="3" data-act="rm" placeholder="Site notes">'+esc(u.rm)+'</textarea></div>';
+  var lastG="";
+  stg(p,u).forEach(function(s){
+    if(s.g!==lastG){h+='<div class="gh">'+esc(s.g)+'</div>';lastG=s.g;}
+    var x=u.s[s.k]|0;
+    h+='<div class="stg"><div>'+esc(s.n)+'</div><div class="seg">'+[0,1,2].map(function(j){
+      return '<button class="b'+j+'" aria-pressed="'+(x===j)+'" data-act="dset" data-k="'+s.k+'" data-v="'+j+'">'+(j===0?'Not started':j===1?(s.t==="r"?'WIP':'In progress'):(s.t==="r"?'Cast':'Done'))+'</button>';}).join("")+'</div></div>';
+  });
+  return h+'</div></div>';
+}
+
+/* ================= Wizard ================= */
+function newWizard(){
+  var d=new Date(),e=new Date();e.setMonth(e.getMonth()+24);
+  return {step:0,err:"",name:"",client:"",payer:"",loc:"Hyderabad, Telangana",start:isoOf(d),end:isoOf(e),type:"",
+    total:20,clusters:[{n:"Cluster A",c:20}],vtypes:[{n:"Type A",c:20}],
+    nb:2,blocks:[],basements:1,ftype:"raft",cycle:7,lag:60};
+}
+function wDefaults(w){
+  var t=w.type,tw=(TYPES[t]||{}).term||"Tower";
+  if(t==="villa")return;
+  var def=t==="highrise"?{nb:2,u:24,bs:1,cyc:7,lag:90}:t==="apartment"?{nb:3,u:4,bs:0,cyc:12,lag:45}:{nb:1,u:3,bs:0,cyc:14,lag:0};
+  w.nb=def.nb;w.basements=def.bs;w.cycle=def.cyc;w.lag=def.lag;w.ftype=t==="highrise"?"raft":"isolated";
+  w.blocks=[];for(var i=0;i<def.nb;i++)w.blocks.push({n:tw+" "+letter(i),u:def.u});
+  var e=new Date(w.start+"T00:00:00");e.setMonth(e.getMonth()+(t==="highrise"?42:t==="apartment"?24:14));w.end=isoOf(e);
+}
+function setPath(o,path,val){var a=path.split("."),t=o;for(var i=0;i<a.length-1;i++)t=t[a[i]];t[a[a.length-1]]=val;}
+function wIn(label,path,type,val,extra){return '<div class="field"><label>'+label+'<input type="'+type+'" data-w="'+path+'" value="'+esc(val)+'"'+(extra||'')+'></label></div>';}
+function vWizard(){
+  var w=ui.w,tw=(TYPES[w.type]||{}).term||"Tower";
+  var h='<div class="scrim center"><div class="modal" role="dialog" aria-label="New project"><div class="mh"><h2 style="font-size:28px">New project</h2><button class="btn" data-act="wclose">Cancel</button></div>'+
+   '<div class="steps">'+["Project","Type","Layout","Review"].map(function(n,i){return '<span class="'+(w.step===i?'on':'')+'">'+(i+1)+'. '+n+'</span>';}).join("")+'</div>';
+  if(w.step===0){
+    h+=wIn("Project name","name","text",w.name,' placeholder="e.g. Indis Amara Villas"')+wIn("Client name","client","text",w.client,' placeholder="e.g. Indis"')+
+      wIn("Payment company","payer","text",w.payer,' placeholder="e.g. ICH Ventures Pvt Ltd"')+wIn("Location","loc","text",w.loc)+
+      '<div class="grid" style="grid-template-columns:1fr 1fr">'+wIn("Planned start","start","date",w.start)+wIn("Planned completion","end","date",w.end)+'</div>';
+  }else if(w.step===1){
+    h+='<div class="opts">'+Object.keys(TYPES).map(function(k){return '<button class="opt" aria-pressed="'+(w.type===k)+'" data-act="wtype" data-v="'+k+'"><b>'+TYPES[k].n+'</b><span class="muted small">'+TYPES[k].d+'</span></button>';}).join("")+'</div>';
+  }else if(w.step===2&&w.type==="villa"){
+    var sc=w.clusters.reduce(function(t,c){return t+(+c.c||0);},0),st=w.vtypes.reduce(function(t,c){return t+(+c.c||0);},0);
+    h+=wIn("Total number of villas","total","number",w.total,' min="1" max="500"')+
+     '<div class="lbl" style="margin-top:12px">Clusters</div>'+w.clusters.map(function(c,i){return '<div class="fr"><input type="text" data-w="clusters.'+i+'.n" value="'+esc(c.n)+'" aria-label="Cluster name"><input type="number" min="1" data-w="clusters.'+i+'.c" value="'+esc(c.c)+'" aria-label="Villas in cluster"><button class="btn" data-act="wrmc" data-v="'+i+'" aria-label="Remove cluster">X</button></div>';}).join("")+
+     '<div class="row"><button class="btn" data-act="waddc">Add cluster</button><button class="btn" data-act="wsplit">Split villas evenly</button><span class="muted small" id="asg">Assigned '+sc+' of '+w.total+' villas</span></div>'+
+     '<div class="lbl" style="margin-top:16px">Villa types</div>'+w.vtypes.map(function(c,i){return '<div class="fr"><input type="text" data-w="vtypes.'+i+'.n" value="'+esc(c.n)+'" aria-label="Villa type name"><input type="number" min="1" data-w="vtypes.'+i+'.c" value="'+esc(c.c)+'" aria-label="Villas of this type"><button class="btn" data-act="wrmt" data-v="'+i+'" aria-label="Remove type">X</button></div>';}).join("")+
+     '<div class="row"><button class="btn" data-act="waddt">Add villa type</button><span class="muted small" id="typ">Typed '+st+' of '+w.total+' villas</span></div>'+
+     '<div class="note" style="margin-top:12px">Villas are numbered V-1 onwards in cluster order. You can move any villa to another cluster later from its detail panel.</div>';
+  }else if(w.step===2){
+    h+='<div class="grid" style="grid-template-columns:1fr 1fr">'+wIn("Number of "+tw.toLowerCase()+"s","nb","number",w.nb,' min="1" max="26" data-rebuild="1"')+wIn(w.type==="highrise"?"Basement levels":"Basement levels (0 if none)","basements","number",w.basements,' min="0" max="6"')+'</div>'+
+     '<div class="lbl">'+tw+'s and upper floors (G + ...)</div>'+w.blocks.map(function(b,i){return '<div class="fr two"><input type="text" data-w="blocks.'+i+'.n" value="'+esc(b.n)+'" aria-label="Name"><input type="number" min="0" max="80" data-w="blocks.'+i+'.u" value="'+esc(b.u)+'" aria-label="Upper floors"></div>';}).join("")+
+     '<div class="field"><label>Foundation type<select data-w="ftype"><option value="raft"'+(w.ftype==="raft"?' selected':'')+'>Raft foundation</option><option value="piled"'+(w.ftype==="piled"?' selected':'')+'>Piled raft / pile foundation</option><option value="isolated"'+(w.ftype==="isolated"?' selected':'')+'>Isolated / strip footings</option></select></label></div>'+
+     '<div class="grid" style="grid-template-columns:1fr 1fr">'+wIn("Days per floor cycle","cycle","number",w.cycle,' min="1"')+wIn("Start delay between "+tw.toLowerCase()+"s (days)","lag","number",w.lag,' min="0"')+'</div>'+
+     '<div class="note">Example: G+24 means ground plus 24 upper floors. These two schedule inputs drive the planned progress, and you can change them later in the Schedule tab.</div>';
+  }else{
+    var items=standardsFor(w.type);
+    h+='<div class="card"><b>'+esc(w.name)+'</b><div class="muted small">Client: '+esc(w.client||"-")+' | Payments: '+esc(w.payer||"-")+' | '+esc(w.loc)+'</div><div class="muted small">'+fmtD(w.start)+' to '+fmtD(w.end)+' | '+TYPES[w.type].n+'</div><div style="margin-top:8px">'+
+      (w.type==="villa"?w.total+' villas in '+w.clusters.length+' cluster'+(w.clusters.length===1?'':'s')+', '+w.vtypes.length+' villa type'+(w.vtypes.length===1?'':'s'):
+       w.blocks.length+' '+tw.toLowerCase()+'(s), '+w.blocks.reduce(function(t,b){return t+(+b.u+1);},0)+' floors in total, foundation: '+w.ftype+(w.basements>0?', '+w.basements+' basement level(s)':''))+'</div></div>'+
+      '<div class="note" style="margin-top:10px">A Hyderabad standards and approvals checklist with '+items.length+' items will be added to this project.</div>';
+  }
+  if(w.err)h+='<div class="err">'+esc(w.err)+'</div>';
+  h+='<div class="row" style="justify-content:space-between;margin-top:14px"><button class="btn" data-act="wback"'+(w.step===0?' disabled':'')+'>Back</button>'+
+    (w.step<3?'<button class="btn primary" data-act="wnext">Next</button>':'<button class="btn primary" data-act="wcreate">Create project</button>')+'</div></div></div>';
+  return h;
+}
+function wValidate(w){
+  if(w.step===0){
+    if(!w.name.trim())return "Enter the project name.";
+    if(!w.client.trim())return "Enter the client name.";
+    if(!w.start||!w.end)return "Enter the planned start and completion dates.";
+    if(dn(w.end)<=dn(w.start))return "Completion date must be after the start date.";
+  }else if(w.step===1){if(!w.type)return "Choose the project type.";}
+  else if(w.step===2){
+    if(w.type==="villa"){
+      var T=+w.total;
+      if(!(T>=1))return "Enter the total number of villas.";
+      if(w.clusters.length===1)w.clusters[0].c=T;
+      if(w.vtypes.length===1)w.vtypes[0].c=T;
+      var sc=w.clusters.reduce(function(t,c){return t+(+c.c||0);},0),st=w.vtypes.reduce(function(t,c){return t+(+c.c||0);},0);
+      if(w.clusters.some(function(c){return !c.n.trim()||!(+c.c>=1);}))return "Every cluster needs a name and at least one villa.";
+      if(sc!==T)return "Cluster villa counts add up to "+sc+", but the total is "+T+".";
+      if(w.vtypes.some(function(c){return !c.n.trim()||!(+c.c>=1);}))return "Every villa type needs a name and a count.";
+      if(st!==T)return "Villa type counts add up to "+st+", but the total is "+T+".";
+    }else{
+      if(!(w.blocks.length>=1))return "Add at least one "+TYPES[w.type].term.toLowerCase()+".";
+      if(w.blocks.some(function(b){return !(+b.u>=0)||b.u==="";}))return "Enter the number of upper floors for each "+TYPES[w.type].term.toLowerCase()+".";
+      if(!(+w.cycle>=1))return "Enter the days per floor cycle.";
+    }
+  }
+  return "";
+}
+
+/* ================= Company modal ================= */
+function vCompany(){
+  return '<div class="scrim center"><div class="modal" role="dialog" aria-label="Company name"><div class="mh"><h2 style="font-size:28px">Company name</h2></div>'+
+   '<div class="field"><label>Company name<input type="text" id="cname" value="'+esc(S.company)+'" placeholder="e.g. Mirai Constructions"></label></div>'+
+   '<div class="row" style="justify-content:flex-end"><button class="btn" data-act="cclose">Cancel</button><button class="btn primary" data-act="csave">Save</button></div></div></div>';
+}
+
+/* ================= Main render ================= */
+function render(){
+  var root=$("#root"),p=ui.view==="project"?cur():null;
+  if(ui.view==="project"&&!p){ui.view="home";}
+  if(ui.view==="home"||!p){root.innerHTML=vHome();}
+  else{
+    var body=ui.tab==="overview"?vOverview(p):ui.tab==="groups"?vGroups(p):ui.tab==="matrix"?vMatrix(p):ui.tab==="update"?vUpdate(p):ui.tab==="schedule"?vSchedule(p):ui.tab==="standards"?vStandards(p):vSettings(p);
+    root.innerHTML=vProjectShell(p,body);
+  }
+  $("#layer").innerHTML=ui.modal==="wizard"?vWizard():ui.modal==="company"?vCompany():(p?vDrawer(p):"");
+  $("#ro").hidden=canWrite;
+}
+
+/* ================= Actions ================= */
+function guard(){if(!canWrite){toast("View only. You cannot change progress.");return false;}return true;}
+function earlierDone(p,u,k){
+  var l=stg(p,u),c=l.filter(function(x){return x.k===k;})[0],tr=(c&&c.tr)||"s";
+  for(var i=0;i<l.length;i++){if(l[i].k===k)break;if((l[i].tr||"s")===tr)u.s[l[i].k]=2;}
+}
+function changed(p){saveP(p);render();}
+function selCount(p){return Object.keys(ui.upd.sel).filter(function(n){return ui.upd.sel[n]&&p.units[n]&&p.units[n].kind===ui.upd.kind;});}
+
+document.addEventListener("click",function(e){
+  var el=e.target.closest("[data-act]");if(!el)return;
+  var a=el.getAttribute("data-act"),v=el.getAttribute("data-v"),p=cur(),w=ui.w;
+  if(a==="closebg"){if(e.target!==el)return;ui.open=null;render();return;}
+  switch(a){
+    case "theme":
+      var r=document.documentElement,dark=getComputedStyle(r).getPropertyValue("--paper").trim()==="#0E1822";
+      r.setAttribute("data-theme",dark?"light":"dark");break;
+    case "home":ui.view="home";ui.pid=null;ui.open=null;render();window.scrollTo(0,0);break;
+    case "openp":ui.view="project";ui.pid=v;ui.tab="overview";ui.group="all";ui.mkind=null;ui.upd={kind:null,stage:null,status:2,earlier:false,sel:{},fa:"",fb:""};ui.delArm=false;render();window.scrollTo(0,0);break;
+    case "newp":if(!guard())return;ui.w=newWizard();ui.modal="wizard";render();break;
+    case "company":ui.modal="company";render();setTimeout(function(){var i=$("#cname");if(i)i.focus();},0);break;
+    case "cclose":ui.modal=null;render();break;
+    case "csave":if(!guard())return;S.company=($("#cname").value||"").trim();saveMeta();ui.modal=null;render();break;
+    case "indis":
+      if(!guard())return;
+      var ip=indisProject();S.projects[ip.id]=ip;saveP(ip);ui.view="project";ui.pid=ip.id;ui.tab="settings";render();
+      toast("Indis Amara Villas added. Set the start and completion dates.");break;
+    /* wizard */
+    case "wclose":ui.modal=null;ui.w=null;render();break;
+    case "wtype":w.type=v;wDefaults(w);w.err="";render();break;
+    case "wback":w.step=Math.max(0,w.step-1);w.err="";render();break;
+    case "wnext":
+      var er=wValidate(w);if(er){w.err=er;render();return;}
+      w.err="";w.step++;render();break;
+    case "wcreate":
+      if(!guard())return;
+      var np=buildFromWizard(w);S.projects[np.id]=np;saveP(np);
+      ui.modal=null;ui.w=null;ui.view="project";ui.pid=np.id;ui.tab="overview";ui.group="all";ui.mkind=null;ui.upd={kind:null,stage:null,status:2,earlier:false,sel:{},fa:"",fb:""};render();window.scrollTo(0,0);
+      toast("Project created");break;
+    case "waddc":w.clusters.push({n:"Cluster "+letter(w.clusters.length),c:1});render();break;
+    case "wrmc":if(w.clusters.length>1){w.clusters.splice(+v,1);}render();break;
+    case "waddt":w.vtypes.push({n:"Type "+letter(w.vtypes.length),c:1});render();break;
+    case "wrmt":if(w.vtypes.length>1){w.vtypes.splice(+v,1);}render();break;
+    case "wsplit":
+      var T=+w.total||0,n=w.clusters.length,b=Math.floor(T/n),rem=T-b*n;
+      w.clusters.forEach(function(c,i){c.c=b+(i<rem?1:0);});render();break;
+    /* project nav */
+    case "tab":ui.tab=v;ui.open=null;ui.delArm=false;render();window.scrollTo(0,0);break;
+    case "gr":ui.group=v;render();break;
+    case "mk":ui.mkind=v;render();break;
+    case "goto":ui.group=v;ui.tab="groups";render();window.scrollTo(0,0);break;
+    case "open":ui.open=v;render();break;
+    case "close":ui.open=null;render();break;
+    case "cyc":
+      if(!guard())return;
+      var u=p.units[el.getAttribute("data-n")],k=el.getAttribute("data-k");
+      u.s[k]=((u.s[k]|0)+1)%3;changed(p);break;
+    case "dset":if(!guard())return;p.units[ui.open].s[el.getAttribute("data-k")]=+v;changed(p);break;
+    case "hold":if(!guard())return;p.units[ui.open].h=+v;changed(p);break;
+    /* update tab */
+    case "uk":ui.upd.kind=v;ui.upd.stage=null;render();break;
+    case "status":ui.upd.status=+v;render();break;
+    case "selg":ulist(p,v,ui.upd.kind).forEach(function(u){ui.upd.sel[u.id]=true;});render();break;
+    case "selall":ulist(p,"all",ui.upd.kind).forEach(function(u){ui.upd.sel[u.id]=true;});render();break;
+    case "selnone":ui.upd.sel={};render();break;
+    case "selrange":
+      var fa=+ui.upd.fa,fb=+ui.upd.fb;if(!(fb>=fa)){toast("Enter a valid floor range.");return;}
+      ulist(p,"all","floor").forEach(function(u){var fn=u.fl-1;if(fn>=fa&&fn<=fb)ui.upd.sel[u.id]=true;});render();break;
+    case "apply":
+      if(!guard())return;
+      var list=selCount(p);if(!list.length){toast("Select at least one unit.");return;}
+      list.forEach(function(id){var uu=p.units[id];if(ui.upd.earlier)earlierDone(p,uu,ui.upd.stage);uu.s[ui.upd.stage]=ui.upd.status;});
+      toast("Updated "+list.length+" unit"+(list.length===1?"":"s"));ui.upd.sel={};changed(p);break;
+    case "replan":
+      if(!guard())return;
+      if(!p.start||!p.end){toast("Set project dates in Settings first.");return;}
+      autoPlan(p);changed(p);toast("Schedule re-distributed");break;
+    case "delp":
+      if(!guard())return;
+      if(!ui.delArm){ui.delArm=true;render();return;}
+      delete S.projects[p.id];S.del[p.id]=Date.now();dirty[p.id]=1;saveMeta();localSave();queue();
+      ui.delArm=false;ui.view="home";ui.pid=null;render();toast("Project deleted");break;
+    case "xlsx":exportXlsx(p);break;
+    case "csv":exportCsv(p);break;
+  }
+});
+function updCounters(){
+  var w=ui.w;if(!w||w.type!=="villa"||w.step!==2)return;
+  var sc=w.clusters.reduce(function(t,c){return t+(+c.c||0);},0),st=w.vtypes.reduce(function(t,c){return t+(+c.c||0);},0);
+  var a=$("#asg"),b=$("#typ");
+  if(a)a.textContent="Assigned "+sc+" of "+w.total+" villas";
+  if(b)b.textContent="Typed "+st+" of "+w.total+" villas";
+}
+function wireInput(el){
+  var path=el.getAttribute("data-w");if(!path||!ui.w)return false;
+  var val=el.type==="number"?(el.value===""?"":+el.value):el.value;
+  setPath(ui.w,path,val);return true;
+}
+document.addEventListener("input",function(e){
+  var el=e.target;
+  if(el.getAttribute&&el.getAttribute("data-w")){wireInput(el);updCounters();return;}
+  var a=el.getAttribute&&el.getAttribute("data-act");
+  if(a==="fa")ui.upd.fa=el.value;else if(a==="fb")ui.upd.fb=el.value;
+});
+document.addEventListener("change",function(e){
+  var el=e.target;if(!el.getAttribute)return;
+  if(el.getAttribute("data-w")){
+    wireInput(el);var w=ui.w,path=el.getAttribute("data-w");
+    if(path==="nb"){
+      var n=Math.max(1,Math.min(26,+w.nb||1)),tw=TYPES[w.type].term,u=w.blocks.length?w.blocks[w.blocks.length-1].u:3;
+      while(w.blocks.length<n)w.blocks.push({n:tw+" "+letter(w.blocks.length),u:u});
+      while(w.blocks.length>n)w.blocks.pop();
+      w.nb=n;
+      render();
+    }
+    return;
+  }
+  var a=el.getAttribute("data-act");if(!a)return;
+  var p=cur();
+  if(a==="stage"){ui.upd.stage=el.value;render();return;}
+  if(a==="earlier"){ui.upd.earlier=el.checked;return;}
+  if(a==="pick"){ui.upd.sel[el.getAttribute("data-v")]=el.checked;render();return;}
+  if(!p)return;
+  if(!guard()){render();return;}
+  if(a==="ugr"){p.units[ui.open].g=el.value;changed(p);}
+  else if(a==="uvt"){p.units[ui.open].vt=el.value;changed(p);}
+  else if(a==="hr"){p.units[ui.open].hr=el.value;changed(p);}
+  else if(a==="rm"){p.units[ui.open].rm=el.value;changed(p);}
+  else if(a==="std"){var id=el.getAttribute("data-v");if(el.checked)p.std[id]=1;else delete p.std[id];saveP(p);render();}
+  else if(a==="plan"){
+    var k=el.getAttribute("data-k"),i=+el.getAttribute("data-i"),cp=(p.plan[k]||["",""]).slice();cp[i]=el.value;
+    if(cp[0]&&cp[1]&&dn(cp[1])<=dn(cp[0])){toast("Finish date must be after the start date.");render();return;}
+    p.plan[k]=cp;changed(p);
+  }
+  else if(a==="cfg"){p.cfg[el.getAttribute("data-f")]=Math.max(1,+el.value||1);changed(p);}
+  else if(a==="glag"){var g=grp(p,el.getAttribute("data-g"));g.lag=Math.max(0,+el.value||0);changed(p);}
+  else if(a==="pset"){
+    var f=el.getAttribute("data-f"),val=el.value;
+    if(f==="name"&&!val.trim()){toast("Project name cannot be empty.");render();return;}
+    p[f]=val;
+    if((f==="start"||f==="end")&&p.start&&p.end){
+      if(dn(p.end)<=dn(p.start)){toast("Completion date must be after the start date.");p[f]="";}
+      else if(!Object.keys(p.plan).length){autoPlan(p);toast("Baseline schedule created. Review it in the Schedule tab.");}
+    }
+    changed(p);
+  }
+});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&ui.open!=null){ui.open=null;render();}});
+
+/* ================= Export: CSV ================= */
+function saveFile(name,data,okMsg){
+  if(window.claude&&window.claude.use){
+    window.claude.use("downloads").then(function(d){
+      if(!d){toast("Download is not available in this view.");return;}
+      d.save({filename:name,data:data}).then(function(){toast(okMsg);}).catch(function(err){
+        if(err&&err.code==="declined")return;
+        toast(err&&err.code==="extension_not_enabled"?"This file type is not enabled for downloads on this page.":"Could not save the file.");
+      });
+    });
+  }else toast("Download is not available in this view.");
+}
+function slug(t){return String(t).replace(/[^A-Za-z0-9]+/g,"-").replace(/^-|-$/g,"")||"project";}
+function exportCsv(p){
+  var al=allStages(p);
+  var rows=[["Unit","Group","Hold","Hold reason","Progress %","Planned %"].concat(al.map(function(e){return e.s.n;})).concat(["Remarks"])];
+  ulist(p).forEach(function(u){
+    var g=grp(p,u.g),r=[u.lbl,g?g.name:"",u.h?"Yes":"No",u.hr,fmt(upct(p,u)),hasPlan(p)?fmt(upl(p,u,todayD())):""];
+    al.forEach(function(e){r.push(e.kind===u.kind?LAB[e.s.t][u.s[e.s.k]|0]:"");});
+    r.push(u.rm);rows.push(r);
+  });
+  var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c==null?"":c).replace(/"/g,'""')+'"';}).join(",");}).join("\n");
+  saveFile(slug(p.name)+"-progress.csv",csv,"CSV saved");
+}
+
+/* ================= Export: Excel with charts ================= */
+function exportXlsx(p){
+  if(typeof JSZip==="undefined"){toast("Excel library did not load. Check your connection and try again.");return;}
+  var NS_C="http://schemas.openxmlformats.org/drawingml/2006/chart",
+      NS_A="http://schemas.openxmlformats.org/drawingml/2006/main",
+      NS_R="http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+      NS_X="http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+      NS_XDR="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing",
+      NS_PR="http://schemas.openxmlformats.org/package/2006/relationships",
+      HDR='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>';
+  var CCOL=["2F6DB5","C2571A","1F8A8A","A33A6B","7A5C1E","4F7A2E","6A4FA0","B0483E"];
+  function X(t){return String(t==null?"":t).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+  function col(i){var s="";i++;while(i>0){var m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26);}return s;}
+  function q(name){return "'"+name+"'!";}
+  var STY=HDR+'<styleSheet xmlns="'+NS_X+'"><fonts count="3"><font><sz val="11"/><name val="Calibri"/></font>'+
+   '<font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts>'+
+   '<fills count="6"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill>'+
+   '<fill><patternFill patternType="solid"><fgColor rgb="FF14283A"/></patternFill></fill>'+
+   '<fill><patternFill patternType="solid"><fgColor rgb="FFA9DFC3"/></patternFill></fill>'+
+   '<fill><patternFill patternType="solid"><fgColor rgb="FFFBE08A"/></patternFill></fill>'+
+   '<fill><patternFill patternType="solid"><fgColor rgb="FFE3E7E8"/></patternFill></fill></fills>'+
+   '<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>'+
+   '<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'+
+   '<cellXfs count="8"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'+
+   '<xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>'+
+   '<xf numFmtId="0" fontId="0" fillId="3" borderId="0" xfId="0" applyFill="1" applyAlignment="1"><alignment horizontal="center"/></xf>'+
+   '<xf numFmtId="0" fontId="0" fillId="4" borderId="0" xfId="0" applyFill="1" applyAlignment="1"><alignment horizontal="center"/></xf>'+
+   '<xf numFmtId="0" fontId="0" fillId="5" borderId="0" xfId="0" applyFill="1" applyAlignment="1"><alignment horizontal="center"/></xf>'+
+   '<xf numFmtId="9" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>'+
+   '<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1"/>'+
+   '<xf numFmtId="9" fontId="2" fillId="0" borderId="0" xfId="0" applyNumberFormat="1" applyFont="1"/></cellXfs></styleSheet>';
+  var ST=[4,3,2];
+  function sheetXml(rows,o){
+    o=o||{};
+    var x=HDR+'<worksheet xmlns="'+NS_X+'" xmlns:r="'+NS_R+'">';
+    if(o.freeze)x+='<sheetViews><sheetView workbookViewId="0"><pane xSplit="1" ySplit="1" topLeftCell="B2" activePane="bottomRight" state="frozen"/></sheetView></sheetViews>';
+    if(o.widths)x+='<cols>'+o.widths.map(function(w,i){return '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>';}).join("")+'</cols>';
+    x+='<sheetData>';
+    rows.forEach(function(r,ri){
+      x+='<row r="'+(ri+1)+'"'+(ri===0&&o.hdrH?' ht="'+o.hdrH+'" customHeight="1"':'')+'>';
+      r.forEach(function(c,ci){
+        if(c==null)return;
+        var d=(typeof c==="object")?c:{v:c},ref=col(ci)+(ri+1),s=d.s?' s="'+d.s+'"':'';
+        if(typeof d.v==="number")x+='<c r="'+ref+'"'+s+'><v>'+d.v+'</v></c>';
+        else x+='<c r="'+ref+'"'+s+' t="inlineStr"><is><t xml:space="preserve">'+X(d.v)+'</t></is></c>';
+      });
+      x+='</row>';
+    });
+    x+='</sheetData>';
+    if(o.drawing)x+='<drawing r:id="rId1"/>';
+    return x+'</worksheet>';
+  }
+  function chartXml(o){
+    function strRef(f,arr){return '<c:strRef><c:f>'+X(f)+'</c:f><c:strCache><c:ptCount val="'+arr.length+'"/>'+arr.map(function(t,i){return '<c:pt idx="'+i+'"><c:v>'+X(t)+'</c:v></c:pt>';}).join("")+'</c:strCache></c:strRef>';}
+    function numRef(f,arr){return '<c:numRef><c:f>'+X(f)+'</c:f><c:numCache><c:formatCode>'+X(o.fmt)+'</c:formatCode><c:ptCount val="'+arr.length+'"/>'+arr.map(function(t,i){return t==null?'':'<c:pt idx="'+i+'"><c:v>'+t+'</c:v></c:pt>';}).join("")+'</c:numCache></c:numRef>';}
+    var line=o.kind==="line",horiz=o.dir==="bar",stacked=o.grouping==="stacked";
+    var ser=o.series.map(function(s,i){
+      var pts="";
+      if(s.pointColors)pts=s.pointColors.map(function(c,j){return '<c:dPt><c:idx val="'+j+'"/><c:invertIfNegative val="0"/><c:bubble3D val="0"/><c:spPr><a:solidFill><a:srgbClr val="'+c+'"/></a:solidFill></c:spPr></c:dPt>';}).join("");
+      var head='<c:ser><c:idx val="'+i+'"/><c:order val="'+i+'"/><c:tx>'+strRef(s.nameRef,[s.name])+'</c:tx>';
+      var data='<c:cat>'+strRef(s.catRef,o.cats)+'</c:cat><c:val>'+numRef(s.valRef,s.vals)+'</c:val>';
+      if(line)return head+'<c:spPr><a:ln w="28575" cap="rnd"><a:solidFill><a:srgbClr val="'+s.color+'"/></a:solidFill>'+(s.dash?'<a:prstDash val="dash"/>':'')+'<a:round/></a:ln></c:spPr><c:marker><c:symbol val="none"/></c:marker>'+data+'<c:smooth val="0"/></c:ser>';
+      return head+'<c:spPr><a:solidFill><a:srgbClr val="'+s.color+'"/></a:solidFill></c:spPr><c:invertIfNegative val="0"/>'+pts+
+       (o.labels?'<c:dLbls><c:numFmt formatCode="'+X(o.fmt)+'" sourceLinked="0"/><c:spPr><a:noFill/></c:spPr><c:dLblPos val="'+(stacked?'ctr':'outEnd')+'"/><c:showLegendKey val="0"/><c:showVal val="1"/><c:showCatName val="0"/><c:showSerName val="0"/><c:showPercent val="0"/><c:showBubbleSize val="0"/></c:dLbls>':'')+data+'</c:ser>';
+    }).join("");
+    var plot=line?'<c:lineChart><c:grouping val="standard"/><c:varyColors val="0"/>'+ser+'<c:marker val="1"/><c:axId val="111111"/><c:axId val="222222"/></c:lineChart>':
+      '<c:barChart><c:barDir val="'+(horiz?'bar':'col')+'"/><c:grouping val="'+(stacked?'stacked':'clustered')+'"/><c:varyColors val="0"/>'+ser+'<c:gapWidth val="'+(o.gap||60)+'"/>'+(stacked?'<c:overlap val="100"/>':'')+'<c:axId val="111111"/><c:axId val="222222"/></c:barChart>';
+    return HDR+'<c:chartSpace xmlns:c="'+NS_C+'" xmlns:a="'+NS_A+'" xmlns:r="'+NS_R+'"><c:roundedCorners val="0"/><c:chart>'+
+     '<c:title><c:tx><c:rich><a:bodyPr/><a:lstStyle/><a:p><a:pPr><a:defRPr sz="1400" b="1"/></a:pPr><a:r><a:rPr lang="en-US" sz="1400" b="1"/><a:t>'+X(o.title)+'</a:t></a:r></a:p></c:rich></c:tx><c:overlay val="0"/></c:title><c:autoTitleDeleted val="0"/>'+
+     '<c:plotArea><c:layout/>'+plot+
+     '<c:catAx><c:axId val="111111"/><c:scaling><c:orientation val="'+(horiz?'maxMin':'minMax')+'"/></c:scaling><c:delete val="0"/><c:axPos val="'+(horiz?'l':'b')+'"/><c:numFmt formatCode="General" sourceLinked="0"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:crossAx val="222222"/><c:crosses val="autoZero"/><c:auto val="1"/><c:lblAlgn val="ctr"/><c:lblOffset val="100"/>'+(o.skip?'<c:tickLblSkip val="'+o.skip+'"/>':'')+'<c:noMultiLvlLbl val="0"/></c:catAx>'+
+     '<c:valAx><c:axId val="222222"/><c:scaling><c:orientation val="minMax"/>'+(o.max!=null?'<c:max val="'+o.max+'"/>':'')+'<c:min val="0"/></c:scaling><c:delete val="0"/><c:axPos val="'+(horiz?'b':'l')+'"/><c:majorGridlines/><c:numFmt formatCode="'+X(o.fmt)+'" sourceLinked="0"/><c:majorTickMark val="none"/><c:minorTickMark val="none"/><c:tickLblPos val="nextTo"/><c:crossAx val="111111"/><c:crosses val="'+(horiz?'max':'autoZero')+'"/><c:crossBetween val="between"/></c:valAx></c:plotArea>'+
+     (o.series.length>1?'<c:legend><c:legendPos val="b"/><c:overlay val="0"/></c:legend>':'')+'<c:plotVisOnly val="1"/><c:dispBlanksAs val="gap"/></c:chart></c:chartSpace>';
+  }
+  function drawingXml(anchors){
+    return HDR+'<xdr:wsDr xmlns:xdr="'+NS_XDR+'" xmlns:a="'+NS_A+'">'+anchors.map(function(a,i){
+      return '<xdr:twoCellAnchor><xdr:from><xdr:col>'+a[0]+'</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>'+a[1]+'</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:from>'+
+       '<xdr:to><xdr:col>'+a[2]+'</xdr:col><xdr:colOff>0</xdr:colOff><xdr:row>'+a[3]+'</xdr:row><xdr:rowOff>0</xdr:rowOff></xdr:to>'+
+       '<xdr:graphicFrame macro=""><xdr:nvGraphicFramePr><xdr:cNvPr id="'+(i+2)+'" name="Chart '+(i+1)+'"/><xdr:cNvGraphicFramePr/></xdr:nvGraphicFramePr><xdr:xfrm><a:off x="0" y="0"/><a:ext cx="0" cy="0"/></xdr:xfrm>'+
+       '<a:graphic><a:graphicData uri="'+NS_C+'"><c:chart xmlns:c="'+NS_C+'" xmlns:r="'+NS_R+'" r:id="rId'+(i+1)+'"/></a:graphicData></a:graphic></xdr:graphicFrame><xdr:clientData/></xdr:twoCellAnchor>';
+    }).join("")+'</xdr:wsDr>';
+  }
+  function hdr(arr){return arr.map(function(t){return {v:t,s:1};});}
+  function r2(n){return Math.round(n)/100;}
+
+  /* data */
+  var units=ulist(p),N=units.length,G=p.groups.filter(function(g){return ulist(p,g.id).length;}),K=G.length;
+  var plan=hasPlan(p),D=todayD(),al=allStages(p),SN=al.length;
+  var names=[],gcol=[];
+  function gc(i){return CCOL[i%CCOL.length];}
+  function gcolHex(id){var i=0;p.groups.forEach(function(g,j){if(g.id===id)i=j;});return gc(i);}
+  var N1="Summary",N2="S-Curve",N3="Stage Progress",N4="Unit Progress",N5="Unit Chart",N6="Schedule",N7="Project";
+
+  // Summary
+  var srows=[hdr(plan?["Group","Units","Actual progress","Planned progress","Variance (pts)","Stages completed","Stages in progress","Stages not started","Units on hold"]:["Group","Units","Actual progress","Planned progress","Variance (pts)","Stages completed","Stages in progress","Stages not started","Units on hold"])];
+  var sAct=[],sPl=[],sD=[],sW=[],sN=[];
+  G.forEach(function(g){
+    var l=ulist(p,g.id),c=counts(p,l),a=avgA(p,l),pl=plan?avgP(p,l,D):0,hd=l.filter(function(u){return u.h;}).length;
+    names.push(g.name);sAct.push(r2(a));sPl.push(r2(pl));sD.push(c[2]);sW.push(c[1]);sN.push(c[0]);
+    srows.push([{v:g.name,s:6},l.length,{v:r2(a),s:5},plan?{v:r2(pl),s:5}:null,plan?Math.round((a-pl)*10)/10:null,c[2],c[1],c[0],hd]);
+  });
+  var ca=counts(p,units),aA=avgA(p,units),aP=plan?avgP(p,units,D):0;
+  srows.push([{v:"All units",s:6},{v:N,s:6},{v:r2(aA),s:7},plan?{v:r2(aP),s:7}:null,plan?{v:Math.round((aA-aP)*10)/10,s:6}:null,{v:ca[2],s:6},{v:ca[1],s:6},{v:ca[0],s:6},{v:units.filter(function(u){return u.h;}).length,s:6}]);
+  srows.push([]);srows.push(["Progress counts a stage as 100% when completed or cast, 50% when in progress or rebar and shuttering WIP, 0% when not started. Planned progress is as of the export date."]);
+
+  // S-Curve
+  var crows=[hdr(["Date","Planned","Actual"])],cd=[],cp=[],ca2=[];
+  if(plan){
+    var a0=dn(p.start),b0=Math.max(dn(p.end),D),span=Math.max(b0-a0,1),step=Math.max(1,Math.ceil(span/52)),ds=[];
+    for(var d=a0;d<b0;d+=step)ds.push(d);ds.push(b0);
+    var hs=p.hist.slice().sort(function(x,y){return x[0]<y[0]?-1:1;});
+    ds.forEach(function(d){
+      var lab=new Date(d*864e5).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"2-digit",timeZone:"UTC"}),pl=r2(avgP(p,units,d)),ac=null;
+      if(d<=D){for(var i=0;i<hs.length;i++){if(dn(hs[i][0])<=d)ac=r2(hs[i][1]);}}
+      cd.push(lab);cp.push(pl);ca2.push(ac);crows.push([lab,{v:pl,s:5},ac==null?null:{v:ac,s:5}]);
+    });
+  }else crows.push(["Set project start and completion dates to build the S-curve."]);
+
+  // Stage progress
+  var grows=[hdr(["Stage","Applies to","Actual progress","Planned progress","Units completed","Units in progress","Units not started"])],gA=[],gP=[],gN=[];
+  al.forEach(function(e){
+    var l=units.filter(function(u){return u.kind===e.kind;}),c=[0,0,0],pp=0;
+    l.forEach(function(u){c[u.s[e.s.k]|0]++;if(plan&&p.plan[e.s.k]){var sh=shiftOf(p,u);pp+=frac(D,dn(p.plan[e.s.k][0])+sh,dn(p.plan[e.s.k][1])+sh);}});
+    var a=l.length?(c[1]*0.5+c[2])/l.length:0,pl=l.length?pp/l.length:0;
+    gN.push(e.s.n);gA.push(Math.round(a*100)/100);gP.push(Math.round(pl*100)/100);
+    grows.push([{v:e.s.n,s:6},e.kind==="unit"?"Each villa":e.kind==="found"?"Foundation / basement":"Floors",{v:Math.round(a*100)/100,s:5},plan?{v:Math.round(pl*100)/100,s:5}:null,c[2],c[1],c[0]]);
+  });
+
+  // Unit progress
+  var vrows=[hdr(["Unit","Group","Hold","Hold reason","Actual progress","Planned progress"].concat(al.map(function(e){return e.s.n;})).concat(["Remarks"]))],vp=[];
+  units.forEach(function(u){
+    var g=grp(p,u.g),r=[{v:u.lbl,s:6},g?g.name:"",u.h?"Yes":"No",u.hr||null,{v:r2(upct(p,u)),s:5},plan?{v:r2(upl(p,u,D)),s:5}:null];
+    al.forEach(function(e){if(e.kind!==u.kind){r.push(null);return;}var x=u.s[e.s.k]|0;r.push({v:LAB[e.s.t][x],s:ST[x]});});
+    r.push(u.rm||null);vrows.push(r);vp.push(r2(upct(p,u)));
+  });
+  var vw=[12,16,7,22,12,12];al.forEach(function(){vw.push(16);});vw.push(34);
+
+  // Schedule
+  var shr=[hdr(["Stage","Applies to","Planned start","Planned finish"])];
+  al.forEach(function(e){var pl=p.plan[e.s.k];shr.push([{v:e.s.n,s:6},e.kind==="unit"?"Each villa":e.kind==="found"?"Foundation / basement":"Floors",pl?fmtD(pl[0]):"",pl?fmtD(pl[1]):""]);});
+  shr.push([]);
+  shr.push(["Group start delays (days after project start)"]);
+  p.groups.forEach(function(g){shr.push([g.name,{v:+g.lag||0}]);});
+  if(p.type!=="villa")shr.push(["Days per floor cycle",{v:+p.cfg.cycle||0}]);
+
+  // Project info
+  var sc=sched(p),prow=[hdr(["Item","Value"])];
+  [["Project",p.name],["Client",p.client],["Payment company",p.payer],["Type",TYPES[p.type].n],["Location",p.loc],["Planned start",fmtD(p.start)],["Planned completion",fmtD(p.end)],
+   ["Exported on",fmtD(today())],["Units tracked",String(N)],["Actual progress",Math.round(aA)+"%"],["Planned progress today",plan?Math.round(aP)+"%":"Dates not set"],["Schedule status",sc?sc.lab:"No schedule"]].forEach(function(r){prow.push([{v:r[0],s:6},r[1]]);});
+
+  /* charts */
+  var charts=[];
+  function addChart(o){charts.push(chartXml(o));return charts.length;}
+  var gnames=G.map(function(g){return g.name;});
+  var ser1=[{name:"Actual",nameRef:q(N1)+"$C$1",catRef:q(N1)+"$A$2:$A$"+(K+1),valRef:q(N1)+"$C$2:$C$"+(K+1),vals:sAct,color:"1F7A55"}];
+  if(plan)ser1.push({name:"Planned",nameRef:q(N1)+"$D$1",catRef:q(N1)+"$A$2:$A$"+(K+1),valRef:q(N1)+"$D$2:$D$"+(K+1),vals:sPl,color:"14283A"});
+  var c1=addChart({title:plan?"Actual vs planned progress by group":"Actual progress by group",dir:"col",grouping:"clustered",fmt:"0%",max:1,labels:true,cats:gnames,series:ser1});
+  var c2=addChart({title:"Stage status by group (number of stages)",dir:"col",grouping:"stacked",fmt:"0",labels:true,cats:gnames,series:[
+    {name:"Stages completed",nameRef:q(N1)+"$F$1",catRef:q(N1)+"$A$2:$A$"+(K+1),valRef:q(N1)+"$F$2:$F$"+(K+1),vals:sD,color:"1F7A55"},
+    {name:"Stages in progress",nameRef:q(N1)+"$G$1",catRef:q(N1)+"$A$2:$A$"+(K+1),valRef:q(N1)+"$G$2:$G$"+(K+1),vals:sW,color:"E0A100"},
+    {name:"Stages not started",nameRef:q(N1)+"$H$1",catRef:q(N1)+"$A$2:$A$"+(K+1),valRef:q(N1)+"$H$2:$H$"+(K+1),vals:sN,color:"CBD1D3"}]});
+  var c3=null,c4,c5;
+  if(plan)c3=addChart({title:"Planned vs actual progress (S-curve)",kind:"line",fmt:"0%",max:1,skip:Math.max(1,Math.round(cd.length/8)),cats:cd,series:[
+    {name:"Planned",nameRef:q(N2)+"$B$1",catRef:q(N2)+"$A$2:$A$"+(cd.length+1),valRef:q(N2)+"$B$2:$B$"+(cd.length+1),vals:cp,color:"14283A",dash:true},
+    {name:"Actual",nameRef:q(N2)+"$C$1",catRef:q(N2)+"$A$2:$A$"+(cd.length+1),valRef:q(N2)+"$C$2:$C$"+(cd.length+1),vals:ca2,color:"1F7A55"}]});
+  var s3=[{name:"Actual",nameRef:q(N3)+"$C$1",catRef:q(N3)+"$A$2:$A$"+(SN+1),valRef:q(N3)+"$C$2:$C$"+(SN+1),vals:gA,color:"1F7A55"}];
+  if(plan)s3.push({name:"Planned",nameRef:q(N3)+"$D$1",catRef:q(N3)+"$A$2:$A$"+(SN+1),valRef:q(N3)+"$D$2:$D$"+(SN+1),vals:gP,color:"14283A"});
+  c4=addChart({title:plan?"Stage-wise actual vs planned":"Stage-wise progress",dir:"bar",grouping:"clustered",fmt:"0%",max:1,gap:40,cats:gN,series:s3});
+  c5=addChart({title:"Progress by unit",dir:"col",grouping:"clustered",fmt:"0%",max:1,gap:30,cats:units.map(function(u){return u.lbl;}),
+    series:[{name:"Actual progress",nameRef:q(N4)+"$E$1",catRef:q(N4)+"$A$2:$A$"+(N+1),valRef:q(N4)+"$E$2:$E$"+(N+1),vals:vp,color:"2F6DB5",pointColors:units.map(function(u){return gcolHex(u.g);})}]});
+
+  var sheets=[
+   {n:N1,xml:sheetXml(srows,{widths:[22,9,15,15,14,16,16,16,12],drawing:true}),dr:{anchors:[[0,K+5,4,K+25],[4,K+5,9,K+25]],ch:[c1,c2]}},
+   {n:N2,xml:sheetXml(crows,{widths:[14,12,12],freeze:false,drawing:!!plan}),dr:plan?{anchors:[[4,1,16,26]],ch:[c3]}:null},
+   {n:N3,xml:sheetXml(grows,{widths:[40,22,15,15,15,15,15],drawing:true}),dr:{anchors:[[8,0,20,Math.max(30,SN*2+4)]],ch:[c4]}},
+   {n:N4,xml:sheetXml(vrows,{widths:vw,freeze:true,hdrH:48}),dr:null},
+   {n:N5,xml:sheetXml([[{v:"Bars use the group colours. Data comes from the Unit Progress sheet.",s:6}]],{widths:[60],drawing:true}),dr:{anchors:[[0,2,24,32]],ch:[c5]}},
+   {n:N6,xml:sheetXml(shr,{widths:[40,24,16,16]}),dr:null},
+   {n:N7,xml:sheetXml(prow,{widths:[26,50]}),dr:null}
+  ];
+
+  var zip=new JSZip(),ct='',wbSheets='',wbRels='',dn2=0;
+  ct+='<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'+
+     '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>';
+  sheets.forEach(function(sh,i){
+    var no=i+1;
+    zip.file("xl/worksheets/sheet"+no+".xml",sh.xml);
+    ct+='<Override PartName="/xl/worksheets/sheet'+no+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';
+    wbSheets+='<sheet name="'+X(sh.n)+'" sheetId="'+no+'" r:id="rId'+no+'"/>';
+    wbRels+='<Relationship Id="rId'+no+'" Type="'+NS_R+'/worksheet" Target="worksheets/sheet'+no+'.xml"/>';
+    if(sh.dr){
+      dn2++;
+      zip.file("xl/worksheets/_rels/sheet"+no+".xml.rels",HDR+'<Relationships xmlns="'+NS_PR+'"><Relationship Id="rId1" Type="'+NS_R+'/drawing" Target="../drawings/drawing'+dn2+'.xml"/></Relationships>');
+      zip.file("xl/drawings/drawing"+dn2+".xml",drawingXml(sh.dr.anchors));
+      zip.file("xl/drawings/_rels/drawing"+dn2+".xml.rels",HDR+'<Relationships xmlns="'+NS_PR+'">'+sh.dr.ch.map(function(cn,j){return '<Relationship Id="rId'+(j+1)+'" Type="'+NS_R+'/chart" Target="../charts/chart'+cn+'.xml"/>';}).join("")+'</Relationships>');
+      ct+='<Override PartName="/xl/drawings/drawing'+dn2+'.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/>';
+    }
+  });
+  charts.forEach(function(cx,i){
+    zip.file("xl/charts/chart"+(i+1)+".xml",cx);
+    ct+='<Override PartName="/xl/charts/chart'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.drawingml.chart+xml"/>';
+  });
+  wbRels+='<Relationship Id="rId'+(sheets.length+1)+'" Type="'+NS_R+'/styles" Target="styles.xml"/>';
+  zip.file("[Content_Types].xml",HDR+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>'+ct+'</Types>');
+  zip.file("_rels/.rels",HDR+'<Relationships xmlns="'+NS_PR+'"><Relationship Id="rId1" Type="'+NS_R+'/officeDocument" Target="xl/workbook.xml"/></Relationships>');
+  zip.file("xl/workbook.xml",HDR+'<workbook xmlns="'+NS_X+'" xmlns:r="'+NS_R+'"><sheets>'+wbSheets+'</sheets></workbook>');
+  zip.file("xl/_rels/workbook.xml.rels",HDR+'<Relationships xmlns="'+NS_PR+'">'+wbRels+'</Relationships>');
+  zip.file("xl/styles.xml",STY);
+  zip.generateAsync({type:"blob",mimeType:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}).then(function(blob){
+    saveFile(slug(p.name)+"-progress-"+today()+".xlsx",blob,"Excel file saved");
+  }).catch(function(){toast("Could not build the Excel file.");});
+}
+
+/* ================= Boot ================= */
+S=loadLocal();
+render();
+if(window.claude&&window.claude.use){
+  window.claude.use("user").then(function(u){
+    if(u&&u.can){u.can("data.write").then(function(ok){if(ok===false){canWrite=false;render();}});}
+  }).catch(function(){});
+  window.claude.use("db").then(function(d){
+    if(!d)return;
+    db=d;
+    d.doc("meta/main").onSnapshot(applyMeta,function(){});
+    d.collection("projects").onSnapshot(applyRemote,function(){});
+    // one-time import of the earlier single-project tracker data
+    d.doc("tracker/main").get().then(function(snap){
+      if(!snap.exists)return;
+      oldSnap=snap;tryImport();
+    }).catch(function(){});
+  }).catch(function(){});
+}
+})();
+</script>
+
+
+</body></html>
